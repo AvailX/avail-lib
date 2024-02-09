@@ -466,8 +466,8 @@ mod tests {
         assert_eq!(mappings.len(), 4);
 
         let identifier = mappings[0];
-        // Assert the identifier is "account"
-        assert_eq!(identifier.to_string(), "account");
+        // Assert the identifier is "committee"
+        assert_eq!(identifier.to_string(), "committee");
     }
 
     #[test]
