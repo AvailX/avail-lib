@@ -194,6 +194,7 @@ mod tests {
 
     use super::*;
     use crate::aleo_tools::test_utils::{HELLO_PROGRAM, HELLO_PROGRAM_2};
+    use crate::models::constants::TESTNET_PRIVATE_KEY;
 
     #[test]
     fn test_constructors_fail_with_multiple_keys_or_no_keys() {
