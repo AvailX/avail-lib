@@ -1,0 +1,50 @@
+[package]
+name = "avail-common"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+aes-gcm = "0.10.2"
+app_dirs = { package = "app_dirs2", version = "2.5" }
+bincode = { version = "1.3.3" }
+bs58 = "0.5.0"
+chrono = { version = "0.4.27", features = ["serde"] }
+deadpool = "0.9.5"
+diesel = { version = "2.1.0", features = ["postgres", "uuid", "chrono"] }
+diesel-async = { version = "0.4.1", features = ["postgres", "deadpool"] }
+duration-str = "0.7.0"
+hex = "0.4.3"
+jni = { version = "0.21.1" }
+keyring = "2.0.5"
+once_cell = "1.18.0"
+rand = "0.8.5"
+reqwest = "0.11.20"
+rusqlite = { version = "0.29.0", features = ["bundled"] }
+rust-argon2 = "1.0.0"
+serde = { version = "1.0.188", features = ["derive"] }
+serde_json = "1.0.107"
+snarkvm = { version = "0.16.16" }
+tauri = { version = "2.0.0-alpha.17", features = [] }
+tokio = "1.32.0"
+tracing = "0.1.37"
+ureq = { version = "2.7.1", features = ["json"] }
+url = "2.4.1"
+uuid = { version = "1.4.1", features = [
+    "v4",
+    "fast-rng",
+    "macro-diagnostics",
+    "serde",
+] }
+
+[target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
+security-framework = { git = "https://github.com/AvailX/rust-security-framework" }
+security-framework-sys = { git = "https://github.com/AvailX/rust-security-framework" }
+
+[dev-dependencies]
+pretty_assertions = "1.3.0"
+temp-env = "0.3.1"
+rstest = "0.17.0"
+tempfile = "3.5.0"
+mockall = "0.11.2"
