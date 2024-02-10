@@ -10,7 +10,9 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  test:
+    permissions:
+      contents: write
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -23,6 +25,7 @@ jobs:
     - uses: Swatinem/rust-cache@v2
 
     - if: matrix.os == 'ubuntu-latest'
+      # Install Ubuntu tauri dependencies
       name: Install Ubuntu dependencies
       run: sudo apt-get install -y libsoup-3.0-dev libwebkit2gtk-4.1-dev javascriptcoregtk-4.1 build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 
@@ -35,3 +38,14 @@ jobs:
 
     - name: Run tests
       run: cargo test --verbose
+
+    - name: Create release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        body_path: CHANGELOG.md
+
+
+
+
+
