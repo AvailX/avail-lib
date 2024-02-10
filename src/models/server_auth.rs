@@ -25,7 +25,7 @@ pub struct CreateSessionResponse {
 /* User Verification */
 #[derive(Serialize, Deserialize, Debug)]
 pub struct VerifyUserRequest {
-    pub address: String
+    pub address: String,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
