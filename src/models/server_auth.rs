@@ -22,7 +22,17 @@ pub struct CreateSessionResponse {
     pub session_id: Uuid,
     pub expires_on: DateTime<Utc>,
 }
+/* User Verification */
+#[derive(Serialize, Deserialize, Debug)]
+pub struct VerifyUserRequest {
+    pub address: String
+}
 
+#[derive(Serialize, Deserialize, Debug)]
+pub struct VerifyUserResponse {
+    pub exists: bool,
+    pub backup: bool,
+}
 /* Session */
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
