@@ -1,0 +1,18 @@
+repos:
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
+    hooks:
+      - id: fmt
+  # run auto-changelog command
+  - repo: local
+    hooks:
+      - id: auto-changelog
+        name: auto-changelog
+        language: system
+        entry: auto-changelog
+        args:
+          - --hide-credit
+          - --template
+          - keepachangelog
+          - --output
+          - CHANGELOG.md
