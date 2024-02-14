@@ -63,6 +63,7 @@ impl AvailError {
     }
 }
 
+#[cfg(feature = "diesel_postgres")]
 impl From<diesel::result::Error> for AvailError {
     fn from(value: diesel::result::Error) -> Self {
         Self {
@@ -181,6 +182,7 @@ impl From<rusqlite::Error> for AvailError {
     }
 }
 
+#[cfg(feature = "diesel_postgres")]
 impl From<deadpool::managed::PoolError<diesel_async::pooled_connection::PoolError>> for AvailError {
     fn from(
         value: deadpool::managed::PoolError<diesel_async::pooled_connection::PoolError>,
@@ -193,6 +195,7 @@ impl From<deadpool::managed::PoolError<diesel_async::pooled_connection::PoolErro
     }
 }
 
+#[cfg(feature = "diesel_postgres")]
 impl From<deadpool::managed::BuildError<diesel_async::pooled_connection::PoolError>>
     for AvailError
 {
@@ -227,6 +230,7 @@ impl From<snarkvm::prelude::Error> for AvailError {
     }
 }
 
+#[cfg(feature = "diesel_postgres")]
 impl From<diesel::ConnectionError> for AvailError {
     fn from(value: diesel::ConnectionError) -> Self {
         Self {
@@ -338,6 +342,7 @@ impl From<keyring::Error> for AvailError {
     }
 }
 
+#[cfg(feature = "tauri")]
 impl From<tauri::Error> for AvailError {
     fn from(value: tauri::Error) -> Self {
         Self {
