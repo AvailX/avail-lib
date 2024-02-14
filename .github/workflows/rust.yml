@@ -34,10 +34,10 @@ jobs:
       uses: ikalnytskyi/action-setup-postgres@v5
 
     - name: Build
-      run: cargo build --verbose
+      run: cargo build --verbose --all-features
 
     - name: Run tests
-      run: cargo test --verbose
+      run: cargo test --verbose --all-features
 
     - name: Create release
       uses: softprops/action-gh-release@v1
