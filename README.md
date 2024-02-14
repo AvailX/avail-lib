@@ -10,7 +10,7 @@ This library, when compiled for a linux Ubuntu target, requires the following de
 
 - `libsoup-3.0-dev`
 - `libwebkit2gtk-4.1-dev`
-- `javascriptcoregtk-4.1`
+- `libjavascriptcoregtk-4.1-dev`
 - `build-essential`
 - `curl`
 - `wget`
@@ -23,7 +23,7 @@ This library, when compiled for a linux Ubuntu target, requires the following de
 You can install them by running the following command:
 
 ```bash
-sudo apt-get install libsoup-3.0-dev libwebkit2gtk-4.1-dev javascriptcoregtk-4.1 build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
+sudo apt-get install libsoup-3.0-dev libwebkit2gtk-4.1-dev libjavascriptcoregtk-4.1-dev build-essential curl wget file libssl-dev libgtk-3-dev libayatana-appindicator3-dev librsvg2-dev
 ```
 
 ## Contributing
