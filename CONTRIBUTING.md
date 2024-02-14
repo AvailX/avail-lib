@@ -4,10 +4,11 @@ To contribute to the common library, there are some guidelines in place to ensur
 
 ## Requirements
 
-[`pre-commit`](https://pre-commit.com/) is used to ensure that the code is formatted correctly and that the tests pass. To install `pre-commit`, run the following command:
+[`pre-commit`](https://pre-commit.com/) is used to ensure that the code is formatted correctly and that the tests pass. To install `pre-commit` and `auto-changelog`, run the following command:
 
 ```bash
-pip install pre-commit auto-changelog
+npm install -g auto-changelog
+pip install pre-commit
 pre-commit install
 ```
 
