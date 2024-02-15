@@ -420,3 +420,8 @@ pub struct DataRequest {
     pub address: String,
     pub data: Data,
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct PageRequest {
+    page: i64
+}
