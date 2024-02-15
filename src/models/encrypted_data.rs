@@ -423,5 +423,5 @@ pub struct DataRequest {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PageRequest {
-    page: i64
+    pub page: i64
 }
