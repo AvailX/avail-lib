@@ -17,6 +17,7 @@ pub enum AvailErrorType {
     Network,
     File,
     Node,
+    #[cfg(feature = "snarkvm")]
     SnarkVm,
     Unauthorized,
 }
@@ -34,6 +35,7 @@ impl fmt::Display for AvailErrorType {
             AvailErrorType::Network => "Network",
             AvailErrorType::File => "File",
             AvailErrorType::Node => "Node",
+            #[cfg(feature = "snarkvm")]
             AvailErrorType::SnarkVm => "SnarkVm",
             AvailErrorType::Unauthorized => "Unauthorized",
         };
@@ -144,6 +146,7 @@ impl From<std::num::TryFromIntError> for AvailError {
     }
 }
 
+#[cfg(feature = "snarkvm")]
 impl From<snarkvm::prelude::bech32::Error> for AvailError {
     fn from(value: snarkvm::prelude::bech32::Error) -> Self {
         Self {
@@ -220,6 +223,7 @@ impl From<aes_gcm::aead::Error> for AvailError {
     }
 }
 
+#[cfg(feature = "snarkvm")]
 impl From<snarkvm::prelude::Error> for AvailError {
     fn from(value: snarkvm::prelude::Error) -> Self {
         Self {

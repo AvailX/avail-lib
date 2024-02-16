@@ -1,9 +1,11 @@
+use std::str::FromStr;
+
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use uuid::Uuid;
 
-use crate::errors::AvailResult;
+use crate::errors::AvailError;
 
 #[derive(Deserialize, Serialize)]
 pub struct CreateSessionRequest {
@@ -47,9 +49,13 @@ impl Session {
             session_id,
         }
     }
+}
 
-    pub fn from_str(session_string: &str) -> AvailResult<Self> {
-        let session: Session = match serde_json::from_str(session_string) {
+impl FromStr for Session {
+    type Err = AvailError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let session: Session = match serde_json::from_str(s) {
             Ok(session) => session,
             Err(e) => {
                 tracing::error!("Error deserializing session: {}", e);

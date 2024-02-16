@@ -1,6 +1,7 @@
-use snarkvm::prelude::*;
-
+#[cfg(feature = "snarkvm")]
 use crate::errors::AvailResult;
+#[cfg(feature = "snarkvm")]
+use snarkvm::prelude::*;
 
 pub fn utf8_string_to_bits(str_in: &str) -> Vec<bool> {
     let mut result = Vec::<bool>::new();
@@ -16,6 +17,7 @@ pub fn utf8_string_to_bits(str_in: &str) -> Vec<bool> {
     result
 }
 
+#[cfg(feature = "snarkvm")]
 pub fn field_to_fields<N: Network>(fld: &Field<N>) -> AvailResult<Vec<Field<N>>> {
     Ok(Value::<N>::from(Literal::Field(*fld)).to_fields()?)
 }

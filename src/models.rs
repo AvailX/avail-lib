@@ -1,5 +1,8 @@
+#[cfg(feature = "snarkvm")]
 pub mod constants;
+#[cfg(feature = "snarkvm")]
 pub mod encrypted_data;
+#[cfg(feature = "snarkvm")]
 pub mod fee_request;
 pub mod friends;
 pub mod local_storage;
