@@ -64,8 +64,6 @@ impl<N: Network> AleoAPIClient<N> {
     pub fn get_blocks(&self, start_height: u32, end_height: u32) -> Result<Vec<Block<N>>> {
         if start_height >= end_height {
             bail!("Start height must be less than end height");
-        } else if end_height - start_height > 50 {
-            bail!("Cannot request more than 50 blocks at a time");
         }
 
         let url = format!(
