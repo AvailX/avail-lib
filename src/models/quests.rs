@@ -2,6 +2,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use snarkvm::prelude::{Field,Network};
+
 #[derive(Deserialize, Serialize, Debug)]
 pub struct Quest {
     pub id: Uuid,
@@ -40,9 +42,13 @@ pub struct QuestsResponse {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
-pub struct VerifyTaskRequest {
+#[serde(bound = "N: Network")]
+pub struct VerifyTaskRequest<N:Network> {
     pub task_id: Uuid,
-    pub tvk : String // change to snarkvm::prelude::Field
+    pub confirmation_height: u64,
+    pub transaction_id: N::TransactionID,
+    pub transition_id: N::TransitionID,
+    pub tvk : Field<N>
 }
 
 #[derive(Deserialize, Serialize, Debug)]
