@@ -45,7 +45,7 @@ pub struct QuestsResponse {
 #[serde(bound = "N: Network")]
 pub struct VerifyTaskRequest<N:Network> {
     pub task_id: Uuid,
-    pub confirmation_height: u64,
+    pub confirmation_height: u32,
     pub transaction_id: N::TransactionID,
     pub transition_id: N::TransitionID,
     pub tvk : Field<N>
@@ -54,4 +54,10 @@ pub struct VerifyTaskRequest<N:Network> {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct VerifyTaskResponse {
     pub verified: bool,
+}
+
+impl VerifyTaskResponse {
+    pub fn new(verified: bool) -> Self {
+        Self { verified }
+    }
 }
