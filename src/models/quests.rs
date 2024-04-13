@@ -65,5 +65,5 @@ impl VerifyTaskResponse {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct WhitelistResponse {
     pub collection_name: String,
-    pub amount: String
+    pub amount: i32
 }
