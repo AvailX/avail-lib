@@ -5,6 +5,26 @@ use uuid::Uuid;
 use snarkvm::prelude::{Field,Network};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Campaign {
+    pub id: Uuid,
+    pub title: String,
+    pub subtitle: String,
+    pub description: CampaignDescription,
+    pub inner_description: String,
+    pub box_image: String,
+    pub bg_image: String,
+    pub profile_image: String,
+    pub color: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct CampaignDescription {
+    pub part1: String,
+    pub main: String,
+    pub part2: String,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Quest {
     pub id: Uuid,
     pub title: String,
