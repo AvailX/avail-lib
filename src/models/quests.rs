@@ -53,6 +53,14 @@ pub struct Reward {
     pub id: Uuid,
     pub collection_name: String,
     pub amount: i32,
+    pub method: RewardMethodCommon,
+}
+
+#[derive(Deserialize, Serialize, Debug,Clone)]
+pub enum RewardMethodCommon {
+    LuckyDraw,
+    LeaderBoard,
+    FCFS
 }
 
 /* API Request/Response types */
