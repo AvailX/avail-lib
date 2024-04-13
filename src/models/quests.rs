@@ -61,3 +61,9 @@ impl VerifyTaskResponse {
         Self { verified }
     }
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct WhitelistResponse {
+    pub collection_name: String,
+    pub amount: String
+}
