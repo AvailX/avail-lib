@@ -34,6 +34,7 @@ pub struct Quest {
     pub reward: Reward,
     pub expires_on: DateTime<Utc>,
     pub created_on: DateTime<Utc>,
+    pub campaign_id: Uuid,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
