@@ -4,7 +4,7 @@ use uuid::Uuid;
 
 use snarkvm::prelude::{Field,Network};
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Quest {
     pub id: Uuid,
     pub title: String,
@@ -16,7 +16,7 @@ pub struct Quest {
     pub created_on: DateTime<Utc>,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Task {
     pub id: Uuid,
     pub title: String,
@@ -28,7 +28,7 @@ pub struct Task {
     pub points: i32,
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug,Clone)]
 pub struct Reward {
     pub id: Uuid,
     pub collection_name: String,
