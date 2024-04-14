@@ -96,3 +96,8 @@ pub struct WhitelistResponse {
     pub collection_name: String,
     pub amount: i32
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct PointsResponse {
+    pub points: i32,
+}
