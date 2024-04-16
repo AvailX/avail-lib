@@ -9,9 +9,9 @@ use super::network::SupportedNetworks;
 #[derive(Deserialize, Serialize, Debug, Clone)]
 // #[serde(bound = "N: Network")]
 pub struct ProverRequest {
-    address: String,
-    auth_object_bytes: Vec<u8>,
-    network: SupportedNetworks,
+    pub address: String,
+    pub auth_object_bytes: Vec<u8>,
+    pub network: SupportedNetworks,
 }
 
 // trait FeeRequest
@@ -54,8 +54,8 @@ impl ProverRequest {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 // #[serde(bound = "N: Network")]
 pub struct ProverResponse {
-    txn_bytes: Vec<u8>,
-    network: SupportedNetworks,
+    pub txn_bytes: Vec<u8>,
+    pub network: SupportedNetworks,
 }
 
 // trait FeeRequest
