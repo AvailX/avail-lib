@@ -112,16 +112,16 @@ impl ProverResponse {
         Ok(data)
     }
 
-    pub async fn from_bytes_rng<R: Rng + CryptoRng + serde::de::DeserializeOwned>(
-        bytes: Vec<u8>,
-    ) -> Result<R, AvailError> {
-        let data: R = deserialize(&bytes)?;
-        Ok(data)
-    }
-    pub async fn to_bytes_rng<R: Rng + CryptoRng + serde::Serialize>(
-        rng: &mut R,
-    ) -> Result<Vec<u8>, AvailError> {
-        let data: Vec<u8> = serialize(&rng)?;
-        Ok(data)
-    }
+    // pub async fn from_bytes_rng<R: Rng + CryptoRng + serde::de::DeserializeOwned>(
+    //     bytes: Vec<u8>,
+    // ) -> Result<R, AvailError> {
+    //     let data: R = deserialize(&bytes)?;
+    //     Ok(data)
+    // }
+    // pub async fn to_bytes_rng<R: Rng + CryptoRng + serde::Serialize>(
+    //     rng: &mut R,
+    // ) -> Result<Vec<u8>, AvailError> {
+    //     let data: Vec<u8> = serialize(&rng)?;
+    //     Ok(data)
+    // }
 }
