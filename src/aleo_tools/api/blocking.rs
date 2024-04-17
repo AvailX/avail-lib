@@ -72,10 +72,12 @@ impl<N: Network> AleoAPIClient<N> {
         );
         match self.client.get(&url).call()?.into_json() {
             Ok(blocks) => Ok(blocks),
-            Err(error) => match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
+            Err(error) =>{
+                println!("Get Blocks Error {}", error.to_string());
+                match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
                true => bail!("zero txs error"),
                 false => bail!("Failed to parse blocks {start_height} (inclusive) to {end_height} (exclusive): {error}"),
-            }
+            }}
         }
     }
 
