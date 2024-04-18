@@ -13,7 +13,7 @@ pub struct ProverRequest {
     pub address: String,
     pub auth_object_bytes: Vec<u8>,
     pub network: SupportedNetworks,
-    pub fee_auth: Vec<u8>,
+    pub fee_auth: Option<Vec<u8>>,
     // maybe add rng
 }
 
@@ -22,7 +22,7 @@ impl ProverRequest {
         address: String,
         auth_object_bytes: Vec<u8>,
         network: SupportedNetworks,
-        fee_auth: Vec<u8>,
+        fee_auth: Option<Vec<u8>>,
     ) -> Self {
         Self {
             address,
