@@ -13,25 +13,22 @@ pub struct ProverRequest {
     pub address: String,
     pub auth_object_bytes: Vec<u8>,
     pub network: SupportedNetworks,
-    pub rng: Vec<u8>,
+    pub fee_auth: Vec<u8>,
     // maybe add rng
 }
 
-// trait FeeRequest
-
-// impl <N:Network> FeeRequest<N> {
 impl ProverRequest {
     pub fn new(
         address: String,
         auth_object_bytes: Vec<u8>,
         network: SupportedNetworks,
-        rng: Vec<u8>,
+        fee_auth: Vec<u8>,
     ) -> Self {
         Self {
             address,
             auth_object_bytes,
             network,
-            rng,
+            fee_auth,
         }
     }
 
@@ -58,19 +55,6 @@ impl ProverRequest {
         let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
         Ok(data)
     }
-
-    pub async fn from_bytes_rng<R: Rng + CryptoRng + serde::de::DeserializeOwned>(
-        bytes: Vec<u8>,
-    ) -> Result<R, AvailError> {
-        let data: R = deserialize(&bytes)?;
-        Ok(data)
-    }
-    pub async fn to_bytes_rng<R: Rng + CryptoRng + serde::Serialize>(
-        rng: &mut R,
-    ) -> Result<Vec<u8>, AvailError> {
-        let data: Vec<u8> = serialize(&rng)?;
-        Ok(data)
-    }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -80,9 +64,6 @@ pub struct ProverResponse {
     pub network: SupportedNetworks,
 }
 
-// trait FeeRequest
-
-// impl <N:Network> FeeRequest<N> {
 impl ProverResponse {
     pub fn new(txn_bytes: Vec<u8>, network: SupportedNetworks) -> Self {
         Self { txn_bytes, network }
@@ -111,17 +92,4 @@ impl ProverResponse {
         let data: snarkvm::prelude::Transaction<N> = deserialize(&bytes)?;
         Ok(data)
     }
-
-    // pub async fn from_bytes_rng<R: Rng + CryptoRng + serde::de::DeserializeOwned>(
-    //     bytes: Vec<u8>,
-    // ) -> Result<R, AvailError> {
-    //     let data: R = deserialize(&bytes)?;
-    //     Ok(data)
-    // }
-    // pub async fn to_bytes_rng<R: Rng + CryptoRng + serde::Serialize>(
-    //     rng: &mut R,
-    // ) -> Result<Vec<u8>, AvailError> {
-    //     let data: Vec<u8> = serialize(&rng)?;
-    //     Ok(data)
-    // }
 }
