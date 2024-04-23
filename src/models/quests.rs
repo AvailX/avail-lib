@@ -15,6 +15,7 @@ pub struct Campaign {
     pub bg_image: String,
     pub profile_image: String,
     pub color: String,
+    pub points_image: String
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
