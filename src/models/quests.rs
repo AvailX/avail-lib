@@ -102,4 +102,5 @@ pub struct WhitelistResponse {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PointsResponse {
     pub points: i32,
+    pub img_src: String
 }
