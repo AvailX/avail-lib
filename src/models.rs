@@ -2,13 +2,14 @@
 pub mod constants;
 #[cfg(feature = "snarkvm")]
 pub mod encrypted_data;
-#[cfg(feature = "snarkvm")]
 pub mod fee_request;
 pub mod friends;
 pub mod local_storage;
+#[cfg(feature = "snarkvm")]
+pub mod mobile_prover;
 pub mod network;
+pub mod quests;
 pub mod server_auth;
 pub mod tokens;
 pub mod traits;
 pub mod user;
-pub mod quests;
