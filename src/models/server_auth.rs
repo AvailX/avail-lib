@@ -40,13 +40,15 @@ pub struct VerifyUserResponse {
 pub struct Session {
     pub address: String,
     pub session_id: Uuid,
+    pub user_id: Uuid,
 }
 
 impl Session {
-    pub fn new(address: String, session_id: Uuid) -> Self {
+    pub fn new(address: String, session_id: Uuid, user_id: Uuid) -> Self {
         Self {
             address,
             session_id,
+            user_id
         }
     }
 }

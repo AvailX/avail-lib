@@ -75,9 +75,10 @@ impl<N: Network> AleoAPIClient<N> {
             Err(error) =>{
                 println!("Get Blocks Error {}", error.to_string());
                 match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
-               true => bail!("zero txs error"),
+                true => bail!("zero txs error"),
                 false => bail!("Failed to parse blocks {start_height} (inclusive) to {end_height} (exclusive): {error}"),
-            }}
+             }
+          }
         }
     }
 
