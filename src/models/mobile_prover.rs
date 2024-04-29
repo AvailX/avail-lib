@@ -42,14 +42,14 @@ impl ProverRequest {
         Ok(data)
     }
 
-    pub async fn to_bytes_auth_object<N: Network>(
+    pub fn to_bytes_auth_object<N: Network>(
         auth_object: snarkvm::prelude::Authorization<N>,
     ) -> Result<Vec<u8>, AvailError> {
         let bytes = serialize(&auth_object)?;
         Ok(bytes)
     }
 
-    pub async fn from_bytes_auth_object<N: Network>(
+    pub fn from_bytes_auth_object<N: Network>(
         bytes: Vec<u8>,
     ) -> Result<snarkvm::prelude::Authorization<N>, AvailError> {
         let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;

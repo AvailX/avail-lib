@@ -1,5 +1,11 @@
 use super::*;
-use crate::aleo_tools::program_manager::Credits;
+use crate::{
+    aleo_tools::program_manager::Credits,
+    errors::{AvailError, AvailErrorType},
+    models::{mobile_prover::ProverRequest, network::SupportedNetworks},
+    service_clients::get_prover_client_with_session,
+    utils::delegate_execution,
+};
 use serde::{Deserialize, Serialize};
 use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
 
@@ -21,7 +27,7 @@ impl<N: Network> ProgramManager<N> {
     /// Executes a transfer to the specified recipient_address with the specified amount and fee.
     /// Specify 0 for no fee.
     #[allow(clippy::too_many_arguments)]
-    pub fn transfer(
+    pub async fn transfer(
         &self,
         amount: u64,
         fee: u64,
@@ -31,6 +37,8 @@ impl<N: Network> ProgramManager<N> {
         amount_record: Option<Record<N, Plaintext<N>>>,
         fee_record: Option<Record<N, Plaintext<N>>>,
         program_id: &str,
+        sender: String,
+        network: SupportedNetworks,
         delegate: bool,
     ) -> Result<N::TransactionID> {
         // Ensure records provided have enough credits to cover the transfer amount and fee
@@ -53,6 +61,47 @@ impl<N: Network> ProgramManager<N> {
         // Retrieve the private key.
         let private_key = self.get_private_key(password)?;
 
+        // Prepare the inputs for a transfer.
+        let (transfer_function, inputs) = match transfer_type {
+            TransferType::Public => {
+                let inputs = vec![
+                    Value::from_str(&recipient_address.to_string())?,
+                    Value::from_str(&format!("{}u64", amount))?,
+                ];
+                ("transfer_public", inputs)
+            }
+            TransferType::Private => {
+                if amount_record.is_none() {
+                    bail!("Amount record must be specified for private transfers");
+                } else {
+                    let inputs = vec![
+                        Value::Record(amount_record.unwrap()),
+                        Value::from_str(&recipient_address.to_string())?,
+                        Value::from_str(&format!("{}u64", amount))?,
+                    ];
+                    ("transfer_private", inputs)
+                }
+            }
+            TransferType::PublicToPrivate => {
+                let inputs = vec![
+                    Value::from_str(&recipient_address.to_string())?,
+                    Value::from_str(&format!("{}u64", amount))?,
+                ];
+                ("transfer_public_to_private", inputs)
+            }
+            TransferType::PrivateToPublic => {
+                if amount_record.is_none() {
+                    bail!("Amount record must be specified for private transfers");
+                } else {
+                    let inputs = vec![
+                        Value::Record(amount_record.unwrap()),
+                        Value::from_str(&recipient_address.to_string())?,
+                        Value::from_str(&format!("{}u64", amount))?,
+                    ];
+                    ("transfer_private_to_public", inputs)
+                }
+            }
+        };
         // Generate the execution transaction
         let execution = match delegate {
             true => {
@@ -67,12 +116,7 @@ impl<N: Network> ProgramManager<N> {
                     >::open(None)?;
                     let vm = snarkvm::synthesizer::VM::from(store)?;
                     let transfer_type = TransferType::Public;
-                    // Prepare the inputs for a transfer.
-                    let transfer_function = "transfer_public";
-                    let inputs = vec![
-                        Value::from_str(&recipient_address.to_string())?,
-                        Value::from_str(&format!("{}u64", amount))?,
-                    ];
+
                     // Create a new transaction.
                     vm.authorize(
                         &private_key,
@@ -82,6 +126,11 @@ impl<N: Network> ProgramManager<N> {
                         rng,
                     )?
                 };
+                let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
+                let prover_request = ProverRequest::new(sender, auth_bytes, network, None);
+                let txn_id_string = delegate_execution(prover_request).await.unwrap();
+                let txn_id = N::TransactionID::from_str(&txn_id_string).unwrap();
+                let txn = self.api_client()?.get_transaction(txn_id).unwrap()
                 // pass the auth object to prover service
             }
             false => {
@@ -91,47 +140,6 @@ impl<N: Network> ProgramManager<N> {
                 let store = ConsensusStore::<N, ConsensusMemory<N>>::open(None)?;
                 let vm = VM::from(store)?;
 
-                // Prepare the inputs for a transfer.
-                let (transfer_function, inputs) = match transfer_type {
-                    TransferType::Public => {
-                        let inputs = vec![
-                            Value::from_str(&recipient_address.to_string())?,
-                            Value::from_str(&format!("{}u64", amount))?,
-                        ];
-                        ("transfer_public", inputs)
-                    }
-                    TransferType::Private => {
-                        if amount_record.is_none() {
-                            bail!("Amount record must be specified for private transfers");
-                        } else {
-                            let inputs = vec![
-                                Value::Record(amount_record.unwrap()),
-                                Value::from_str(&recipient_address.to_string())?,
-                                Value::from_str(&format!("{}u64", amount))?,
-                            ];
-                            ("transfer_private", inputs)
-                        }
-                    }
-                    TransferType::PublicToPrivate => {
-                        let inputs = vec![
-                            Value::from_str(&recipient_address.to_string())?,
-                            Value::from_str(&format!("{}u64", amount))?,
-                        ];
-                        ("transfer_public_to_private", inputs)
-                    }
-                    TransferType::PrivateToPublic => {
-                        if amount_record.is_none() {
-                            bail!("Amount record must be specified for private transfers");
-                        } else {
-                            let inputs = vec![
-                                Value::Record(amount_record.unwrap()),
-                                Value::from_str(&recipient_address.to_string())?,
-                                Value::from_str(&format!("{}u64", amount))?,
-                            ];
-                            ("transfer_private_to_public", inputs)
-                        }
-                    }
-                };
                 // Create a new transaction.
                 vm.execute(
                     &private_key,
