@@ -128,9 +128,9 @@ impl<N: Network> ProgramManager<N> {
                 };
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
                 let prover_request = ProverRequest::new(sender, auth_bytes, network, None);
-                let txn_id_string = delegate_execution(prover_request).await.unwrap();
-                let txn_id = N::TransactionID::from_str(&txn_id_string).unwrap();
-                let txn = self.api_client()?.get_transaction(txn_id).unwrap()
+                let txn_string = delegate_execution(prover_request).await.unwrap();
+                let txn = Transaction::from_str(&txn_string).unwrap();
+                txn
                 // pass the auth object to prover service
             }
             false => {
@@ -152,7 +152,9 @@ impl<N: Network> ProgramManager<N> {
                 )?
             }
         };
-
+        if delegate {
+            return Ok(execution.id());
+        }
         self.broadcast_transaction(execution.clone())?;
 
         Ok(execution.id())
