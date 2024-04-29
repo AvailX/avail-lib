@@ -15,6 +15,9 @@
 // along with the Aleo SDK library. If not, see <https://www.gnu.org/licenses/>.
 
 use super::*;
+use crate::models::mobile_prover::ProverRequest;
+use crate::models::network::SupportedNetworks;
+use crate::utils::delegate_execution;
 use rand::rngs::ThreadRng;
 use snarkvm::circuit::network::Aleo;
 use snarkvm::ledger::{block::*, query::*, store::helpers::memory::BlockMemory};
@@ -23,7 +26,7 @@ impl<N: Network> ProgramManager<N> {
     /// Execute a program function on the Aleo Network.
     ///
     /// To run this function successfully, the program must already be deployed on the Aleo Network
-    pub fn execute_program(
+    pub async fn execute_program(
         &mut self,
         program_id: impl TryInto<ProgramID<N>>,
         function: impl TryInto<Identifier<N>>,
@@ -31,6 +34,9 @@ impl<N: Network> ProgramManager<N> {
         priority_fee: u64,
         fee_record: Option<Record<N, Plaintext<N>>>,
         password: Option<&str>,
+        address: String,
+        network: SupportedNetworks,
+        delegate: bool,
     ) -> Result<N::TransactionID> {
         // Ensure a network client is set, otherwise online execution is not possible
         ensure!(
@@ -65,8 +71,15 @@ impl<N: Network> ProgramManager<N> {
             function_id,
             node_url,
             self.api_client()?,
-        )?;
+            address,
+            network,
+            delegate,
+        )
+        .await?;
 
+        if delegate {
+            return Ok(transaction.id());
+        }
         // Broadcast the execution transaction to the network
         println!("Attempting to broadcast execution transaction for {program_id:?}");
         let execution = self.broadcast_transaction(transaction.clone());
@@ -83,7 +96,7 @@ impl<N: Network> ProgramManager<N> {
 
     /// Create an execute transaction without initializing a program manager instance
     #[allow(clippy::too_many_arguments)]
-    pub fn create_execute_transaction(
+    pub async fn create_execute_transaction(
         private_key: &PrivateKey<N>,
         priority_fee: u64,
         inputs: impl ExactSizeIterator<Item = impl TryInto<Value<N>>>,
@@ -92,6 +105,9 @@ impl<N: Network> ProgramManager<N> {
         function: impl TryInto<Identifier<N>>,
         node_url: String,
         api_client: &AleoAPIClient<N>,
+        address: String,
+        network: SupportedNetworks,
+        delegate: bool,
     ) -> Result<Transaction<N>> {
         // Initialize an RNG and query object for the transaction
         let rng = &mut rand::thread_rng();
@@ -112,15 +128,29 @@ impl<N: Network> ProgramManager<N> {
         let vm = Self::initialize_vm(api_client, program, true)?;
 
         // Create an execution transaction
-        vm.execute(
-            private_key,
-            (program_id, function_name),
-            inputs,
-            fee_record,
-            priority_fee,
-            Some(query),
-            rng,
-        )
+        match delegate {
+            true => {
+                let authorization =
+                    vm.authorize(private_key, program_id, function_name, inputs, rng)?;
+                let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
+                let prover_request = ProverRequest::new(address, auth_bytes, network, None);
+                let txn_string = delegate_execution(prover_request).await.unwrap();
+                let txn = Transaction::from_str(&txn_string)?;
+                Ok(txn)
+            }
+            false => {
+                let execution = vm.execute(
+                    private_key,
+                    (program_id, function_name),
+                    inputs,
+                    fee_record,
+                    priority_fee,
+                    Some(query),
+                    rng,
+                )?;
+                Ok(execution)
+            }
+        }
     }
 
     /// Estimate the cost of executing a program with the given inputs in microcredits. The response
