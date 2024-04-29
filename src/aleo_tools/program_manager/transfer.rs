@@ -129,6 +129,7 @@ impl<N: Network> ProgramManager<N> {
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
                 let prover_request = ProverRequest::new(sender, auth_bytes, network, None);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
+                println!("txn_string: {:?}", txn_string);
                 let txn = Transaction::from_str(&txn_string).unwrap();
                 txn
                 // pass the auth object to prover service
