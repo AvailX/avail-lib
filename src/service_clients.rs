@@ -123,7 +123,7 @@ pub static SESSION: Lazy<Arc<Session>> = Lazy::new(|| Arc::new(Session::new()));
 
 #[test]
 fn test_session() {
-    SESSION.set_session_token("test".to_string());
+    SESSION.set_session_token("tylerDurden@0xf5".to_string());
     let token = SESSION.get_session_token();
-    assert_eq!(token, Some("test".to_string()));
+    assert_eq!(token, Some("tylerDurden@0xf5".to_string()));
 }
