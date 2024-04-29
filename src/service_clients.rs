@@ -86,7 +86,8 @@ pub fn get_prover_client_with_session(
 
     let cookie_value = format!("{}={}", cookie_name, session);
 
-    let url = format!("{}/prover/{}", api, path);
+    // let url = format!("{}/prover/{}", api, path);
+    let url = format!("http://192.168.0.137:8000/prover/{}", path);
 
     let request = client
         .request(method, url)
@@ -123,7 +124,7 @@ pub static SESSION: Lazy<Arc<Session>> = Lazy::new(|| Arc::new(Session::new()));
 
 #[test]
 fn test_session() {
-    SESSION.set_session_token("tylerDurden@0xf5".to_string());
+    SESSION.set_session_token("5e47b1df-ccaa-44b9-9d0a-c59ff359cb9c".to_string());
     let token = SESSION.get_session_token();
     assert_eq!(token, Some("tylerDurden@0xf5".to_string()));
 }
