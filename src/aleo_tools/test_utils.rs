@@ -661,7 +661,7 @@ pub const RECORD_NFT_CLAIM: &str = r"{
     _nonce: ";
 
 pub const RECORD_2000000001_MICROCREDITS: &str = r"{
-  owner: aleo1j7qxyunfldj2lp8hsvy7mw5k8zaqgjfyr72x2gh3x4ewgae8v5gscf5jh3.private,
+  owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,
   microcredits: 2000000001u64.private,
   _nonce: 440655410641037118713377218645355605135385337348439127168929531052605977026group.public
 }";

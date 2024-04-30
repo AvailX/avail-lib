@@ -6,6 +6,7 @@ use crate::{
     service_clients::get_prover_client_with_session,
     utils::delegate_execution,
 };
+use security_framework::authorization;
 use serde::{Deserialize, Serialize};
 use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
 
@@ -105,7 +106,7 @@ impl<N: Network> ProgramManager<N> {
         // Generate the execution transaction
         let execution = match delegate {
             true => {
-                let authorization = {
+                let (authorization, fee_authorization) = {
                     let api_client = self.api_client()?;
                     let rng = &mut rand::thread_rng();
                     let query: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
@@ -116,21 +117,54 @@ impl<N: Network> ProgramManager<N> {
                     >::open(None)?;
                     let vm = snarkvm::synthesizer::VM::from(store)?;
                     let transfer_type = TransferType::Public;
-
+                    // check if the fee record is present
+                    // if fee record is present, authorize the fee
                     // Create a new transaction.
-                    vm.authorize(
-                        &private_key,
-                        program_id,
-                        transfer_function,
-                        inputs.iter(),
-                        rng,
-                    )?
+                    let fee_authorization = {
+                        if fee_record.is_some() {
+                            let fee_record = fee_record.unwrap();
+                            let fee_inputs = vec![
+                                Value::Record(fee_record.clone()),
+                                Value::from_str(&format!("{}u64", fee))?,
+                                Value::from_str(&format!("{}u64", fee))?,
+                                Value::from_str("9789517609field")?,
+                            ];
+
+                            let fee_authorization = vm.authorize(
+                                &private_key,
+                                "credits.aleo",
+                                "fee_private",
+                                fee_inputs.iter(),
+                                rng,
+                            )?;
+                            Some(fee_authorization)
+                        } else {
+                            None
+                        }
+                    };
+                    (
+                        vm.authorize(
+                            &private_key,
+                            program_id,
+                            transfer_function,
+                            inputs.iter(),
+                            rng,
+                        )?,
+                        fee_authorization,
+                    )
                 };
+                println!("IN DELEGATE");
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
-                let prover_request = ProverRequest::new(sender, auth_bytes, network, None);
+                let fee_auth_bytes = match fee_authorization {
+                    Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
+                    None => None,
+                };
+                let prover_request =
+                    ProverRequest::new(sender, auth_bytes, network, fee_auth_bytes);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 println!("txn_string: {:?}", txn_string);
                 let txn = Transaction::from_str(&txn_string).unwrap();
+                println!("txnid: {:?}", txn.id());
                 txn
                 // pass the auth object to prover service
             }
@@ -163,4 +197,54 @@ impl<N: Network> ProgramManager<N> {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use super::*;
+    use crate::aleo_tools::{program_manager::Credits, test_utils::RECORD_2000000001_MICROCREDITS};
+    use crate::models::constants::{TESTNET3_ADDRESS, TESTNET_ADDRESS, TESTNET_PRIVATE_KEY};
+    use crate::models::network::SupportedNetworks;
+    use crate::service_clients::{get_prover_client_with_session, SESSION};
+    use crate::utils::delegate_execution;
+    use security_framework::authorization;
+    use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
+    use std::str::FromStr;
+
+    #[tokio::test]
+    async fn test_transfer() {
+        // let st = SESSION.get_session_token().unwrap();
+        SESSION.set_session_token("tylerDurden@0xf5".to_string());
+        let private_key = PrivateKey::<Testnet3>::from_str(TESTNET_PRIVATE_KEY).unwrap();
+        let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
+        let program_manager =
+            ProgramManager::<Testnet3>::new(Some(private_key), None, Some(api_client), None)
+                .unwrap();
+        let amount = 1000000u64;
+        let fee = 10000u64;
+        let recipient_address = Address::from_str(TESTNET_ADDRESS).unwrap();
+        let transfer_type = TransferType::PublicToPrivate;
+        let password = Some("password");
+        let amount_record = None;
+        let fee_record = Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap());
+        let program_id = "credits.aleo";
+        let sender = "sender".to_string();
+        let network = SupportedNetworks::Testnet3;
+        let delegate = true;
+
+        let result = program_manager
+            .transfer(
+                amount,
+                fee,
+                recipient_address,
+                transfer_type,
+                password,
+                amount_record,
+                fee_record,
+                program_id,
+                sender,
+                network,
+                delegate,
+            )
+            .await
+            .unwrap();
+        println!("RES ==> {:?}", result);
+    }
+}
