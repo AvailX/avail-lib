@@ -6,7 +6,7 @@ use crate::{
     service_clients::get_prover_client_with_session,
     utils::delegate_execution,
 };
-use security_framework::authorization;
+// use security_framework::authorization;
 use serde::{Deserialize, Serialize};
 use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
 
@@ -187,9 +187,9 @@ impl<N: Network> ProgramManager<N> {
                 )?
             }
         };
-        if delegate {
-            return Ok(execution.id());
-        }
+        // if delegate {
+        //     return Ok(execution.id());
+        // }
         self.broadcast_transaction(execution.clone())?;
 
         Ok(execution.id())
@@ -204,6 +204,7 @@ mod tests {
     use crate::models::network::SupportedNetworks;
     use crate::service_clients::{get_prover_client_with_session, SESSION};
     use crate::utils::delegate_execution;
+    use rusqlite::Transaction;
     use security_framework::authorization;
     use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
     use std::str::FromStr;
@@ -212,18 +213,28 @@ mod tests {
     async fn test_transfer() {
         // let st = SESSION.get_session_token().unwrap();
         SESSION.set_session_token("tylerDurden@0xf5".to_string());
-        let private_key = PrivateKey::<Testnet3>::from_str(TESTNET_PRIVATE_KEY).unwrap();
-        let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
+        let private_key = PrivateKey::<Testnet3>::from_str(
+            "APrivateKey1zkpEa57WrhvNVagKkja6mzU5waS4xFXidKtBNMweupft7JX",
+        )
+        .unwrap();
+        let node_api_obscura = env!("TESTNET_API_OBSCURA");
+        let base_url = format!(
+            "https://aleo-testnet3.obscura.build/v1/{}",
+            node_api_obscura
+        );
+        let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
+
         let program_manager =
             ProgramManager::<Testnet3>::new(Some(private_key), None, Some(api_client), None)
                 .unwrap();
         let amount = 1000000u64;
         let fee = 10000u64;
         let recipient_address = Address::from_str(TESTNET_ADDRESS).unwrap();
-        let transfer_type = TransferType::PublicToPrivate;
+        let transfer_type = TransferType::Public;
         let password = Some("password");
         let amount_record = None;
-        let fee_record = Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap());
+        const RECORD_MAINNET: &str = r"{owner:aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp.private,microcredits:5000000u64.private,_nonce:8225702631067250884087834370560624180419459511593007256346751473925039784459group.public}";
+        let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap());
         let program_id = "credits.aleo";
         let sender = "sender".to_string();
         let network = SupportedNetworks::Testnet3;
@@ -246,5 +257,22 @@ mod tests {
             .await
             .unwrap();
         println!("RES ==> {:?}", result);
+    }
+
+    #[tokio::test]
+    async fn test_trancaction() {
+        let node_api_obscura = env!("TESTNET_API_OBSCURA");
+        let base_url = format!(
+            "https://aleo-testnet3.obscura.build/v1/{}",
+            node_api_obscura
+        );
+        let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
+        let transaction_id =
+            <snarkvm::prelude::Testnet3 as snarkvm::prelude::Network>::TransactionID::from_str(
+                "at1vyhke88wvur0wj44duxv5cg0gmwwpp98thysvdfdjhea7q5maqps02gdpt",
+            )
+            .unwrap();
+        let res = api_client.get_transaction(transaction_id).unwrap();
+        println!("RES ==> {:?}", res);
     }
 }
