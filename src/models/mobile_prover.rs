@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use snarkvm::ledger::store::ConsensusStorage;
+use snarkvm::synthesizer::VM;
 
 use super::network::SupportedNetworks;
 use crate::errors::AvailError;
@@ -14,7 +16,7 @@ pub struct ProverRequest {
     pub auth_object_bytes: Vec<u8>,
     pub network: SupportedNetworks,
     pub fee_auth: Option<Vec<u8>>,
-    // maybe add rng
+    pub rng: Vec<u8>, // maybe add rng
 }
 
 impl ProverRequest {
@@ -23,12 +25,14 @@ impl ProverRequest {
         auth_object_bytes: Vec<u8>,
         network: SupportedNetworks,
         fee_auth: Option<Vec<u8>>,
+        rng: Vec<u8>,
     ) -> Self {
         Self {
             address,
             auth_object_bytes,
             network,
             fee_auth,
+            rng,
         }
     }
 
@@ -55,6 +59,18 @@ impl ProverRequest {
         let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
         Ok(data)
     }
+
+    // pub fn to_bytes_rng<R: Rng + CryptoRng>(rng: &mut R) -> Result<Vec<u8>, AvailError> {
+    //     let bytes = serialize(&rng)?;
+    //     Ok(bytes)
+    // }
+
+    // pub fn from_bytes_rng<N: Network, C: ConsensusStorage<N>>(
+    //     bytes: Vec<u8>,
+    // ) -> Result<snarkvm::prelude::Authorization<N>, AvailError> {
+    //     let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
+    //     Ok(data)
+    // }
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]

@@ -111,6 +111,7 @@ impl<N: Network> ProgramManager<N> {
     ) -> Result<Transaction<N>> {
         // Initialize an RNG and query object for the transaction
         let rng = &mut rand::thread_rng();
+        let rng_bytes = rng.gen::<[u8; 32]>().to_vec();
         let query = Query::from(node_url);
 
         // Check that the function exists in the program
@@ -130,10 +131,12 @@ impl<N: Network> ProgramManager<N> {
         // Create an execution transaction
         match delegate {
             true => {
+                // PRIVATE
                 let authorization =
                     vm.authorize(private_key, program_id, function_name, inputs, rng)?;
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
-                let prover_request = ProverRequest::new(address, auth_bytes, network, None);
+                let prover_request =
+                    ProverRequest::new(address, auth_bytes, network, None, rng_bytes);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 let txn = Transaction::from_str(&txn_string)?;
                 Ok(txn)

@@ -106,7 +106,7 @@ impl<N: Network> ProgramManager<N> {
         // Generate the execution transaction
         let execution = match delegate {
             true => {
-                let (authorization, fee_authorization) = {
+                let (authorization, fee_authorization, mut rng) = {
                     let api_client = self.api_client()?;
                     let rng = &mut rand::thread_rng();
                     let query: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
@@ -116,6 +116,7 @@ impl<N: Network> ProgramManager<N> {
                         snarkvm::ledger::store::helpers::memory::ConsensusMemory<N>,
                     >::open(None)?;
                     let vm = snarkvm::synthesizer::VM::from(store)?;
+                    // let vm_bytes =                    snarkvm::synthesizer::VM::try_into(vm.clone()).unwrap();
                     let transfer_type = TransferType::Public;
                     // check if the fee record is present
                     // if fee record is present, authorize the fee
@@ -151,16 +152,18 @@ impl<N: Network> ProgramManager<N> {
                             rng,
                         )?,
                         fee_authorization,
+                        rng.clone(),
                     )
                 };
                 println!("IN DELEGATE");
+                let rng_bytes = rng.gen::<[u8; 32]>().to_vec();
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
                 let fee_auth_bytes = match fee_authorization {
                     Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
                     None => None,
                 };
                 let prover_request =
-                    ProverRequest::new(sender, auth_bytes, network, fee_auth_bytes);
+                    ProverRequest::new(sender, auth_bytes, network, fee_auth_bytes, rng_bytes);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 println!("txn_string: {:?}", txn_string);
                 let txn = Transaction::from_str(&txn_string).unwrap();
@@ -169,7 +172,7 @@ impl<N: Network> ProgramManager<N> {
                 // pass the auth object to prover service
             }
             false => {
-                let rng = &mut rand::thread_rng();
+                let rng: &mut rand::prelude::ThreadRng = &mut rand::thread_rng();
 
                 // Initialize a VM
                 let store = ConsensusStore::<N, ConsensusMemory<N>>::open(None)?;
@@ -191,7 +194,7 @@ impl<N: Network> ProgramManager<N> {
         //     return Ok(execution.id());
         // }
         self.broadcast_transaction(execution.clone())?;
-
+        println!("EXECUTION ID: {:?}", execution);
         Ok(execution.id())
     }
 }
@@ -200,7 +203,10 @@ impl<N: Network> ProgramManager<N> {
 mod tests {
     use super::*;
     use crate::aleo_tools::{program_manager::Credits, test_utils::RECORD_2000000001_MICROCREDITS};
-    use crate::models::constants::{TESTNET3_ADDRESS, TESTNET_ADDRESS, TESTNET_PRIVATE_KEY};
+    use crate::models::constants::{
+        TESTNET3_ADDRESS, TESTNET3_ADDRESS_2, TESTNET3_PRIVATE_KEY, TESTNET_ADDRESS,
+        TESTNET_PRIVATE_KEY,
+    };
     use crate::models::network::SupportedNetworks;
     use crate::service_clients::{get_prover_client_with_session, SESSION};
     use crate::utils::delegate_execution;
@@ -217,26 +223,31 @@ mod tests {
             "APrivateKey1zkpEa57WrhvNVagKkja6mzU5waS4xFXidKtBNMweupft7JX",
         )
         .unwrap();
+
+        // let private_key = PrivateKey::<Testnet3>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
         let base_url = format!(
             "https://aleo-testnet3.obscura.build/v1/{}",
             node_api_obscura
         );
         let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
-
+        // let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
         let program_manager =
             ProgramManager::<Testnet3>::new(Some(private_key), None, Some(api_client), None)
                 .unwrap();
         let amount = 1000000u64;
         let fee = 10000u64;
-        let recipient_address = Address::from_str(TESTNET_ADDRESS).unwrap();
+        // let recipient_address = Address::from_str(TESTNET3_ADDRESS).unwrap();
+        let recipient_address =
+            Address::from_str("aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp")
+                .unwrap();
         let transfer_type = TransferType::Public;
-        let password = Some("password");
+        let password = Some("tylerDurden@0xf5");
         let amount_record = None;
         const RECORD_MAINNET: &str = r"{owner:aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp.private,microcredits:5000000u64.private,_nonce:8225702631067250884087834370560624180419459511593007256346751473925039784459group.public}";
-        let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap());
+        let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); ////Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap()); //None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //
         let program_id = "credits.aleo";
-        let sender = "sender".to_string();
+        let sender = "aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp".to_string();
         let network = SupportedNetworks::Testnet3;
         let delegate = true;
 
@@ -252,7 +263,7 @@ mod tests {
                 program_id,
                 sender,
                 network,
-                delegate,
+                false,
             )
             .await
             .unwrap();
@@ -266,10 +277,12 @@ mod tests {
             "https://aleo-testnet3.obscura.build/v1/{}",
             node_api_obscura
         );
-        let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
+        // let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
+        let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
+
         let transaction_id =
             <snarkvm::prelude::Testnet3 as snarkvm::prelude::Network>::TransactionID::from_str(
-                "at1vyhke88wvur0wj44duxv5cg0gmwwpp98thysvdfdjhea7q5maqps02gdpt",
+                "at1p65f5gnypthvyv73ugs9ylr4f36z8gzpd3crd2vnv2hq48uwmcrqnkq3nk",
             )
             .unwrap();
         let res = api_client.get_transaction(transaction_id).unwrap();
