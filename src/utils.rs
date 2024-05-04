@@ -1,12 +1,14 @@
+use snarkvm::console::program::Network;
+
 use crate::{
     errors::{AvailError, AvailErrorType, AvailResult},
     models::mobile_prover::ProverRequest,
     service_clients::get_prover_client_with_session,
 };
 
-pub async fn delegate_execution(request: ProverRequest) -> AvailResult<String> {
+pub async fn delegate_execution<N: Network>(request: ProverRequest<N>) -> AvailResult<String> {
     let res = get_prover_client_with_session(reqwest::Method::POST, "delegateProving")?
-        .json(&request)
+        .json("sss") //&request)
         .send()
         .await?;
     println!("Prover Response{:?}", res);

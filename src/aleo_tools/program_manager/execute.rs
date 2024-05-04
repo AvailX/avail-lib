@@ -134,9 +134,9 @@ impl<N: Network> ProgramManager<N> {
                 // PRIVATE
                 let authorization =
                     vm.authorize(private_key, program_id, function_name, inputs, rng)?;
-                let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
+                // let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
                 let prover_request =
-                    ProverRequest::new(address, auth_bytes, network, None, rng_bytes);
+                    ProverRequest::new(address, authorization, network, None, rng_bytes, query);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 let txn = Transaction::from_str(&txn_string)?;
                 Ok(txn)
