@@ -120,12 +120,10 @@ impl<N: Network> ProgramManager<N> {
         // Generate the execution transaction
         let execution = match delegate {
             true => {
-                let (authorization, fee_authorization, mut rng, vm, eId) = {
+                let (authorization, fee_authorization, eId) = {
                     let api_client = self.api_client()?;
-                    let mut rng = rand::rngs::StdRng::from_entropy();
+                    let mut rng = rand::thread_rng();
                     println!("||||| Base URL NUMBER 1 ===> {:?}", api_client.base_url());
-
-                    let query: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
 
                     // Initialize a VM
                     let store = snarkvm::ledger::store::ConsensusStore::<
@@ -174,10 +172,9 @@ impl<N: Network> ProgramManager<N> {
                             Some(fee_authorization)
                         }
                     };
-                    (authorization, fee_authorization, rng, vm, execution_id)
+                    (authorization, fee_authorization, execution_id)
                 };
                 println!("DELEGATING EXECUTION TO AVAIL PROVER SERVICE");
-                let rng_bytes = rng.gen::<[u8; 32]>().to_vec();
                 let auth_bytes =
                     ProverRequest::to_bytes_auth_object(authorization.clone()).unwrap();
                 let fee_auth_bytes = match fee_authorization.clone() {

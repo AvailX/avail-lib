@@ -110,8 +110,7 @@ impl<N: Network> ProgramManager<N> {
         delegate: bool,
     ) -> Result<Transaction<N>> {
         // Initialize an RNG and query object for the transaction
-        let rng = &mut rand::thread_rng();
-        let rng_bytes = rng.gen::<[u8; 32]>().to_vec();
+        let mut rng = rand::thread_rng();
         let query = Query::from(node_url);
 
         // Check that the function exists in the program
@@ -127,20 +126,59 @@ impl<N: Network> ProgramManager<N> {
 
         // Initialize the VM
         let vm = Self::initialize_vm(api_client, program, true)?;
-        let b_store = vm.block_store();
         // Create an execution transaction
         match delegate {
             true => {
+                println!("DELEGATING EXECUTION TO AVAIL PROVER SERVICE");
+
                 // PRIVATE
                 let authorization =
-                    vm.authorize(private_key, program_id, function_name, inputs, rng)?;
+                    vm.authorize(private_key, program_id, function_name, inputs, &mut rng)?;
+                let execution_id = authorization.to_execution_id()?;
+                let fee_authorization = {
+                    if fee_record.is_some() {
+                        let fee_record = fee_record.unwrap();
+                        let fee_inputs = vec![
+                            Value::Record(fee_record.clone()),
+                            Value::from_str(&format!("{}u64", priority_fee))?,
+                            Value::from_str(&format!("{}u64", priority_fee))?,
+                            Value::from_str(&execution_id.to_string())?,
+                        ];
+
+                        let fee_authorization = vm.authorize_fee_private(
+                            &private_key,
+                            fee_record,
+                            priority_fee,
+                            priority_fee,
+                            execution_id,
+                            &mut rng,
+                        )?;
+                        Some(fee_authorization)
+                    } else {
+                        let fee_authorization = vm.authorize_fee_public(
+                            &private_key,
+                            priority_fee,
+                            priority_fee,
+                            execution_id,
+                            &mut rng,
+                        )?;
+                        Some(fee_authorization)
+                    }
+                };
                 let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
-                let prover_request = ProverRequest::new(address, auth_bytes, network, None);
+                let fee_auth_bytes = match fee_authorization {
+                    Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
+                    None => None,
+                };
+                let prover_request =
+                    ProverRequest::new(address, auth_bytes, network, fee_auth_bytes);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 let txn = Transaction::from_str(&txn_string)?;
                 Ok(txn)
             }
             false => {
+                println!("EXECUTING TRANSFER ON YOUR DEVICE");
+
                 let execution = vm.execute(
                     private_key,
                     (program_id, function_name),
@@ -148,7 +186,7 @@ impl<N: Network> ProgramManager<N> {
                     fee_record,
                     priority_fee,
                     Some(query),
-                    rng,
+                    &mut rng,
                 )?;
                 Ok(execution)
             }
