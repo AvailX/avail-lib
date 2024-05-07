@@ -12,7 +12,6 @@ use rand::{
     rngs::{StdRng, ThreadRng},
     SeedableRng,
 };
-use security_framework::authorization;
 // use security_framework::authorization;
 use serde::{Deserialize, Serialize};
 use snarkvm::{
