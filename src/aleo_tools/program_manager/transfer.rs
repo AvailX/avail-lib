@@ -1,4 +1,4 @@
-use std::vec;
+use std::{io::Bytes, vec};
 
 use super::*;
 use crate::{
@@ -19,7 +19,7 @@ use snarkvm::{
     circuit::environment::Public,
     ledger::{
         query::*,
-        store::{helpers::memory::BlockMemory, ConsensusStorage},
+        store::{helpers::memory::BlockMemory, BlockStorage, BlockStore, ConsensusStorage},
     },
     synthesizer::vm,
 };
@@ -125,7 +125,10 @@ impl<N: Network> ProgramManager<N> {
                 let (authorization, fee_authorization, mut rng, vm, eId) = {
                     let api_client = self.api_client()?;
                     let mut rng = rand::rngs::StdRng::from_entropy();
+                    println!("||||| Base URL NUMBER 1 ===> {:?}", api_client.base_url());
+
                     let query: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
+
                     // Initialize a VM
                     let store = snarkvm::ledger::store::ConsensusStore::<
                         N,
@@ -204,6 +207,8 @@ impl<N: Network> ProgramManager<N> {
                 //     query,
                 // );
                 // let txn_string = delegate_execution(prover_request).await.unwrap();
+                let bstore = vm.block_store();
+                let query1: Query<N, BlockMemory<N>> = Query::from(bstore);
                 let txn_string = mock_delegate_execution(
                     authorization,
                     fee_authorization,
@@ -265,7 +270,7 @@ impl<N: Network> ProgramManager<N> {
         Ok(execution.id())
     }
 }
-
+// mocking server side fn as to reduce work from changing ProverRequest everytime
 async fn mock_delegate_execution<N: Network>(
     auth: Authorization<N>,
     fee: Option<Authorization<N>>,
@@ -281,19 +286,19 @@ async fn mock_delegate_execution<N: Network>(
     let vmn = VM::<N, ConsensusMemory<N>>::from(store)?;
     // // let api_client = setup_local_client::<N>(); //setup_client::<N>()?;
     let api_client = setup_client::<N>()?;
-    println!("||||| Base URL ===> {:?}", api_client.base_url());
+    println!("||||| Base URL Number 2 ===> {:?}", api_client.base_url());
     let mut rng = rand::thread_rng();
 
-    // let query: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
+    let queryq: Query<N, BlockMemory<N>> = Query::from(api_client.base_url());
     println!("||||| AUTH IS ===> {:?}", auth.is_split());
     println!("||||| AUTH ===> {:?}", auth);
     println!("||||| FEE ===> {:?}", fee);
-    let txn_return = vmn.execute_authorization(auth, fee, Some(query), &mut rng)?;
+    let txn_return = vmn.execute_authorization(auth, fee, Some(queryq), &mut rng)?;
     println!(
-        "|||| COnstains ===> {:?}",
-        vm.contains_program(&ProgramID::<N>::from_str("credits.aleo")?)
+        "|||| COntains ===> {:?}",
+        vmn.contains_program(&ProgramID::<N>::from_str("credits.aleo")?)
     );
-    let res = vmn.finalize_store().get_value_speculative(
+    let res = vm.finalize_store().get_value_speculative(
         ProgramID::from_str("credits.aleo")?,
         Identifier::from_str("account")?,
         &Plaintext::from(Literal::Address(Address::<N>::from_str(&sender).unwrap())),
@@ -309,8 +314,38 @@ async fn mock_delegate_execution<N: Network>(
     };
 
     let transitions = txn_return.transitions();
+    //broadcast_txn(txn_return.clone()).await?;
 
     Ok(txn_return.to_string())
+}
+
+async fn broadcast_txn<N: Network>(transaction: Transaction<N>) -> Result<String> {
+    println!("IN BROADCAST");
+    let transaction_type = if let Transaction::Deploy(..) = &transaction {
+        "Deployment"
+    } else {
+        "Execute"
+    };
+    // let api_client = setup_local_client::<N>(); //setup_client::<N>()?;
+    let api_client = setup_client::<N>()?;
+    let result = api_client.transaction_broadcast(transaction);
+    println!("||||| BROADCAST Result ===> {:?}", result);
+    if result.is_ok() {
+        println!(
+            "✅ {} Transaction successfully posted to {}/{}",
+            transaction_type,
+            api_client.base_url(),
+            api_client.network_id()
+        );
+        Ok(result?)
+    } else {
+        println!(
+            "❌ {} Transaction failed to post to {}",
+            transaction_type,
+            api_client.base_url()
+        );
+        Ok(result?)
+    }
 }
 
 pub fn setup_client<N: Network>() -> Result<AleoAPIClient<N>> {

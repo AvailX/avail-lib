@@ -127,16 +127,15 @@ impl<N: Network> ProgramManager<N> {
 
         // Initialize the VM
         let vm = Self::initialize_vm(api_client, program, true)?;
-
+        let b_store = vm.block_store();
         // Create an execution transaction
         match delegate {
             true => {
                 // PRIVATE
                 let authorization =
                     vm.authorize(private_key, program_id, function_name, inputs, rng)?;
-                // let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
-                let prover_request =
-                    ProverRequest::new(address, authorization, network, None, rng_bytes, query);
+                let auth_bytes = ProverRequest::to_bytes_auth_object(authorization).unwrap();
+                let prover_request = ProverRequest::new(address, auth_bytes, network, None);
                 let txn_string = delegate_execution(prover_request).await.unwrap();
                 let txn = Transaction::from_str(&txn_string)?;
                 Ok(txn)

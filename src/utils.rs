@@ -6,7 +6,7 @@ use crate::{
     service_clients::get_prover_client_with_session,
 };
 
-pub async fn delegate_execution<N: Network>(request: ProverRequest<N>) -> AvailResult<String> {
+pub async fn delegate_execution(request: ProverRequest) -> AvailResult<String> {
     let res = get_prover_client_with_session(reqwest::Method::POST, "delegateProving")?
         .json("sss") //&request)
         .send()

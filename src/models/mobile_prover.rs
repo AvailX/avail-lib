@@ -5,6 +5,7 @@ use serde::{Deserialize, Serialize};
 use snarkvm::ledger::query::Query;
 use snarkvm::ledger::store::helpers::memory::BlockMemory;
 use snarkvm::ledger::store::BlockStorage;
+use snarkvm::ledger::store::BlockStore;
 use snarkvm::ledger::store::ConsensusStorage;
 use snarkvm::synthesizer::vm;
 use snarkvm::synthesizer::Authorization;
@@ -17,87 +18,89 @@ use snarkvm::prelude::CryptoRng;
 use snarkvm::prelude::Network;
 use snarkvm::prelude::Rng;
 
-// #[derive(Deserialize, Serialize, Debug, Clone)]
-#[derive(Clone)]
+#[derive(Deserialize, Serialize, Debug)]
+// #[derive(Clone)]
 // #[serde(bound = "N: Network")]
-pub struct ProverRequest<N: Network> {
-    // pub struct ProverRequest {
+// pub struct ProverRequest<N: Network> {
+pub struct ProverRequest {
     pub address: String,
-    pub auth: Authorization<N>,
+    pub auth: Vec<u8>, //Authorization<N>,
     pub network: SupportedNetworks,
-    pub fee_auth: Option<Authorization<N>>,
-    pub rng: Vec<u8>,                    // maybe add rng
-    pub query: Query<N, BlockMemory<N>>, // pub vm: VM<N, C>,
+    pub fee_auth: Option<Vec<u8>>, //Option<Authorization<N>>,
+                                   // pub rng: Vec<u8>,      // maybe add rng
+                                   // pub query: Query<N, C::BlockStorage>>, // pub vm: VM<N, C>,
+                                   // pub block_storage: Vec<u8>, //dyn BlockStorage<N>,
 }
 
-impl<N: Network> ProverRequest<N> {
-    // impl ProverRequest {
-
+// impl<N: Network> ProverRequest<N> {
+impl ProverRequest {
     pub fn new(
         address: String,
-        auth: Authorization<N>,
+        auth: Vec<u8>, //Authorization<N>,
         network: SupportedNetworks,
-        fee_auth: Option<Authorization<N>>,
-        rng: Vec<u8>,
-        query: Query<N, BlockMemory<N>>,
-        // vm: VM<N, C>,
+        fee_auth: Option<Vec<u8>>, //Option<Authorization<N>>,
+                                   // rng: Vec<u8>,
+                                   // block_storage: Vec<u8>, //dyn BlockStorage<N>,
+                                   // query: Query<N, BlockMemory<N>>,
+                                   // vm: VM<N, C>,
     ) -> Self {
         Self {
             address,
             auth,
             network,
             fee_auth,
-            rng,
-            query, // vm,
+            // rng,
+            // block_storage,
+            // query, // vm,
         }
     }
 
-    // pub fn to_bytes(&self) -> Result<Vec<u8>, AvailError> {
-    //     let bytes = serialize(&self)?;
-    //     Ok(bytes)
-    // }
-
-    // pub fn from_bytes(bytes: Vec<u8>) -> Result<Self, AvailError> {
-    //     let data = deserialize(&bytes)?;
-    //     Ok(data)
-    // }
-
-    // pub fn to_bytes_auth_object(
-    //     auth_object: snarkvm::prelude::Authorization<N>,
-    // ) -> Result<Vec<u8>, AvailError> {
-    //     let bytes = serialize(&auth_object)?;
-    //     Ok(bytes)
-    // }
-
-    // pub fn from_bytes_auth_object(
-    //     bytes: Vec<u8>,
-    // ) -> Result<snarkvm::prelude::Authorization<N>, AvailError> {
-    //     let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
-    //     Ok(data)
-    // }
-
-    // pub fn to_bytes_rng<R: Rng + CryptoRng>(rng: &mut R) -> Result<Vec<u8>, AvailError> {
-    //     let bytes = serialize(&rng)?;
-    //     Ok(bytes)
-    // }
-
-    // pub fn from_bytes_rng<N: Network, C: ConsensusStorage<N>>(
-    //     bytes: Vec<u8>,
-    // ) -> Result<snarkvm::prelude::Authorization<N>, AvailError> {
-    //     let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
-    //     Ok(data)
-    // }
-}
-
-impl<N: Network> Display for ProverRequest<N> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "ProverRequest: address: {}, network: {:?}",
-            self.address, self.network
-        )
+    pub fn to_bytes(&self) -> Result<Vec<u8>, AvailError> {
+        let bytes = serialize(&self)?;
+        Ok(bytes)
     }
+
+    pub fn from_bytes(bytes: Vec<u8>) -> Result<Self, AvailError> {
+        let data = deserialize(&bytes)?;
+        Ok(data)
+    }
+
+    pub fn to_bytes_auth_object<N: Network>(
+        auth_object: snarkvm::prelude::Authorization<N>,
+    ) -> Result<Vec<u8>, AvailError> {
+        let bytes = serialize(&auth_object)?;
+        Ok(bytes)
+    }
+
+    pub fn from_bytes_auth_object<N: Network>(
+        bytes: Vec<u8>,
+    ) -> Result<snarkvm::prelude::Authorization<N>, AvailError> {
+        let data: snarkvm::prelude::Authorization<N> = deserialize(&bytes)?;
+        Ok(data)
+    }
+
+    // pub fn to_bytes_bs<N: Network>(
+    //     bs: BlockStorage<N>, //BlockStore<N, dyn BlockStorage<N>>,
+    // ) -> Result<Vec<u8>, AvailError> {
+    //     let bytes = serialize(&bs)?;
+    //     Ok(bytes)
+    // }
+
+    // pub fn from_bytes_bs<N: Network>(bytes: Vec<u8>) -> Result<BlockMemory<N>, AvailError> {
+    //     let data: BlockMemory<N> = deserialize(&bytes)?;
+    //     Ok(data)
+    // }
 }
+
+// impl<N: Network> Display for ProverRequest<N> {
+//     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+//         write!(
+//             f,
+//             "ProverRequest: address: {}, network: {:?}",
+//             self.address, self.network
+//         )
+//     }
+// }
 
 // #[derive(Deserialize, Serialize, Debug, Clone)]
 // // #[serde(bound = "N: Network")]
