@@ -314,7 +314,7 @@ async fn mock_delegate_execution<N: Network>(
     };
 
     let transitions = txn_return.transitions();
-    //broadcast_txn(txn_return.clone()).await?;
+    broadcast_txn(txn_return.clone()).await?;
 
     Ok(txn_return.to_string())
 }
