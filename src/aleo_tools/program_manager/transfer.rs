@@ -192,33 +192,33 @@ impl<N: Network> ProgramManager<N> {
                 };
                 println!("IN DELEGATE");
                 let rng_bytes = rng.gen::<[u8; 32]>().to_vec();
-                // let auth_bytes =
-                //     ProverRequest::<N>::to_bytes_auth_object(authorization.clone()).unwrap();
-                // let fee_auth_bytes = match fee_authorization.clone() {
-                //     Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
-                //     None => None,
-                // };
-                // let prover_request = ProverRequest::<N>::new(
-                //     sender.clone(),
-                //     authorization,
-                //     network,
-                //     fee_authorization,
-                //     rng_bytes,
-                //     query,
-                // );
-                // let txn_string = delegate_execution(prover_request).await.unwrap();
-                let bstore = vm.block_store();
-                let query1: Query<N, BlockMemory<N>> = Query::from(bstore);
-                let txn_string = mock_delegate_execution(
-                    authorization,
-                    fee_authorization,
-                    &mut rng,
-                    vm,
-                    eId,
+                let auth_bytes =
+                    ProverRequest::to_bytes_auth_object(authorization.clone()).unwrap();
+                let fee_auth_bytes = match fee_authorization.clone() {
+                    Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
+                    None => None,
+                };
+                let prover_request = ProverRequest::new(
                     sender.clone(),
-                    query,
-                )
-                .await?;
+                    auth_bytes,
+                    network,
+                    fee_auth_bytes,
+                    // rng_bytes,
+                    // query,
+                );
+                let txn_string = delegate_execution(prover_request).await.unwrap();
+                // let bstore = vm.block_store();
+                // let query1: Query<N, BlockMemory<N>> = Query::from(bstore);
+                // let txn_string = mock_delegate_execution(
+                //     authorization,
+                //     fee_authorization,
+                //     &mut rng,
+                //     vm,
+                //     eId,
+                //     sender.clone(),
+                //     query,
+                // )
+                // .await?;
                 println!("txn_string: {:?}", txn_string);
                 let txn = Transaction::from_str(&txn_string).unwrap();
                 println!("txnid: {:?}", txn.id());
