@@ -96,16 +96,6 @@ impl From<reqwest::Error> for AvailError {
     }
 }
 
-impl From<tauri_plugin_http::reqwest::Error> for AvailError {
-    fn from(value: tauri_plugin_http::reqwest::Error) -> Self {
-        Self {
-            error_type: AvailErrorType::Network,
-            internal_msg: format!("TauriReqwestError: {}", value),
-            external_msg: "Network error".to_string(),
-        }
-    }
-}
-
 impl From<bs58::decode::Error> for AvailError {
     fn from(value: bs58::decode::Error) -> Self {
         Self {
