@@ -104,3 +104,14 @@ pub struct PointsResponse {
     pub points: i32,
     pub img_src: String
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct Collection {
+    pub id: Uuid,
+    pub name: String,
+    pub whitelist_img: String,
+    pub description: String,
+    pub inner_img: Option<String>,
+    pub twitter_link: Option<String>,
+    pub discord_link: Option<String>,
+}
