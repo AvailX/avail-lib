@@ -7,13 +7,17 @@ use crate::{
 };
 
 pub async fn delegate_execution(request: ProverRequest) -> AvailResult<String> {
-    let res = get_prover_client_with_session(reqwest::Method::POST, "delegateProving")?
-        .json(&request)
-        .send()
-        .await?;
+    let res = get_prover_client_with_session(
+        tauri_plugin_http::reqwest::Method::POST,
+        "delegateProving",
+    )?
+    .json(&request)
+    .send()
+    .await
+    .unwrap();
     println!("Prover Response{:?}", res);
     if res.status() == 200 {
-        Ok(res.text().await?)
+        Ok(res.text().await.unwrap())
     } else {
         Err(AvailError::new(
             AvailErrorType::External,
