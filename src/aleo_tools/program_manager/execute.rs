@@ -138,13 +138,6 @@ impl<N: Network> ProgramManager<N> {
                 let fee_authorization = {
                     if fee_record.is_some() {
                         let fee_record = fee_record.unwrap();
-                        let fee_inputs = vec![
-                            Value::Record(fee_record.clone()),
-                            Value::from_str(&format!("{}u64", priority_fee))?,
-                            Value::from_str(&format!("{}u64", priority_fee))?,
-                            Value::from_str(&execution_id.to_string())?,
-                        ];
-
                         let fee_authorization = vm.authorize_fee_private(
                             &private_key,
                             fee_record,

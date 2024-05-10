@@ -130,8 +130,6 @@ impl<N: Network> ProgramManager<N> {
                         snarkvm::ledger::store::helpers::memory::ConsensusMemory<N>,
                     >::open(None)?;
                     let vm = VM::from(store)?;
-                    let transfer_type = TransferType::Public;
-
                     let authorization = vm.authorize(
                         &private_key,
                         program_id,
@@ -144,13 +142,6 @@ impl<N: Network> ProgramManager<N> {
                     let fee_authorization = {
                         if fee_record.is_some() {
                             let fee_record = fee_record.unwrap();
-                            let fee_inputs = vec![
-                                Value::Record(fee_record.clone()),
-                                Value::from_str(&format!("{}u64", fee))?,
-                                Value::from_str(&format!("{}u64", fee))?,
-                                Value::from_str(&execution_id.to_string())?,
-                            ];
-
                             let fee_authorization = vm.authorize_fee_private(
                                 &private_key,
                                 fee_record,
@@ -188,7 +179,6 @@ impl<N: Network> ProgramManager<N> {
                 let txn = Transaction::from_str(&txn_string).unwrap();
                 println!("txnid: {:?}", txn.id());
                 txn
-                // pass the auth object to prover service
             }
             false => {
                 let mut rng = rand::thread_rng();
