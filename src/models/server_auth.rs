@@ -34,7 +34,9 @@ pub struct VerifyUserRequest {
 pub struct VerifyUserResponse {
     pub exists: bool,
     pub backup: bool,
+    pub user_id: Uuid,
 }
+
 /* Session */
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
