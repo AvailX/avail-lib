@@ -124,6 +124,8 @@ pub struct EncryptedData {
     pub event_type: Option<EventTypeCommon>,
     pub record_nonce: Option<String>,
     pub transaction_state: Option<TransactionState>,
+    pub transaction_id: Option<String>,
+    pub transition_id: Option<String>
 }
 
 impl EncryptedData {
@@ -145,6 +147,8 @@ impl EncryptedData {
         event_type: Option<EventTypeCommon>,
         record_nonce: Option<String>,
         transaction_state: Option<TransactionState>,
+        transaction_id: Option<String>,
+        transition_id: Option<String>
     ) -> Self {
         Self {
             id,
@@ -164,6 +168,8 @@ impl EncryptedData {
             event_type,
             record_nonce,
             transaction_state,
+            transaction_id,
+            transition_id
         }
     }
 
