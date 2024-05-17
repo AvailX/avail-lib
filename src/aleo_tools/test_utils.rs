@@ -687,12 +687,12 @@ pub fn random_program_id(len: usize) -> String {
 }
 
 /// Get a random program
-pub fn random_program() -> Program<Testnet3> {
+pub fn random_program() -> Program<TestnetV0> {
     let random_program = String::from("program ")
         .add(&random_program_id(15))
         .add(";")
         .add(GENERIC_PROGRAM_BODY);
-    Program::<Testnet3>::from_str(&random_program).unwrap()
+    Program::<TestnetV0>::from_str(&random_program).unwrap()
 }
 
 /// Create temp directory with test data
@@ -712,7 +712,7 @@ pub fn setup_directory(
 
         let imports_directory = directory.join("imports");
         fs::create_dir(directory.join("imports")).unwrap();
-        let program = Program::<Testnet3>::from_str(main_program).unwrap();
+        let program = Program::<TestnetV0>::from_str(main_program).unwrap();
         let program_id = program.id();
 
         // Create the manifest file.

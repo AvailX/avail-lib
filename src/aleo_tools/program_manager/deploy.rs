@@ -167,7 +167,7 @@ impl<N: Network> ProgramManager<N> {
             _ => bail!("❌ Transaction is not a deployment transaction"),
         };
 
-        let (minimum_deployment_cost, (storage_cost, namespace_cost)) =
+        let (minimum_deployment_cost, (storage_cost, synthesis_cost, namespace_cost)) =
             deployment_cost::<N>(deployment)?;
         Ok((minimum_deployment_cost, (storage_cost, namespace_cost)))
     }
@@ -203,29 +203,29 @@ mod tests {
         RECORD_2000000001_MICROCREDITS, RECORD_5_MICROCREDITS,
     };
     use crate::models::constants::TESTNET_PRIVATE_KEY;
-    use snarkvm::console::network::Testnet3;
+    use snarkvm::console::network::TestnetV0;
 
     use std::{ops::Add, str::FromStr, thread};
 
     #[test]
     #[ignore]
     fn test_deploy() {
-        let recipient_private_key = PrivateKey::<Testnet3>::from_str(TESTNET_PRIVATE_KEY).unwrap();
-        let finalize_program = Program::<Testnet3>::from_str(FINALIZE_TEST_PROGRAM).unwrap();
-        let multiply_program = Program::<Testnet3>::from_str(MULTIPLY_PROGRAM).unwrap();
+        let recipient_private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
+        let finalize_program = Program::<TestnetV0>::from_str(FINALIZE_TEST_PROGRAM).unwrap();
+        let multiply_program = Program::<TestnetV0>::from_str(MULTIPLY_PROGRAM).unwrap();
         let multiply_import_program =
-            Program::<Testnet3>::from_str(MULTIPLY_IMPORT_PROGRAM).unwrap();
+            Program::<TestnetV0>::from_str(MULTIPLY_IMPORT_PROGRAM).unwrap();
 
         // Wait for the node to bootup
         thread::sleep(std::time::Duration::from_secs(5));
 
-        let api_client = AleoAPIClient::<Testnet3>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
 
         let temp_dir =
             setup_directory("aleo_test_deploy", CREDITS_IMPORT_TEST_PROGRAM, vec![]).unwrap();
 
         // Ensure that program manager creation fails if no key is provided
-        let mut program_manager = ProgramManager::<Testnet3>::new(
+        let mut program_manager = ProgramManager::<TestnetV0>::new(
             Some(recipient_private_key),
             None,
             Some(api_client),
@@ -328,13 +328,13 @@ mod tests {
     #[test]
     fn test_deploy_failure_conditions() {
         let rng = &mut rand::thread_rng();
-        let recipient_private_key = PrivateKey::<Testnet3>::new(rng).unwrap();
+        let recipient_private_key = PrivateKey::<TestnetV0>::new(rng).unwrap();
         let record_5_microcredits =
-            Record::<Testnet3, Plaintext<Testnet3>>::from_str(RECORD_5_MICROCREDITS).unwrap();
+            Record::<TestnetV0, Plaintext<TestnetV0>>::from_str(RECORD_5_MICROCREDITS).unwrap();
         let record_2000000001_microcredits =
-            Record::<Testnet3, Plaintext<Testnet3>>::from_str(RECORD_2000000001_MICROCREDITS)
+            Record::<TestnetV0, Plaintext<TestnetV0>>::from_str(RECORD_2000000001_MICROCREDITS)
                 .unwrap();
-        let api_client = AleoAPIClient::<Testnet3>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
         let randomized_program = random_program();
         let randomized_program_id = randomized_program.id().to_string();
         let randomized_program_string = randomized_program.to_string();
@@ -346,7 +346,7 @@ mod tests {
         .unwrap();
 
         // Ensure that program manager creation fails if no key is provided
-        let mut program_manager = ProgramManager::<Testnet3>::new(
+        let mut program_manager = ProgramManager::<TestnetV0>::new(
             Some(recipient_private_key),
             None,
             Some(api_client.clone()),
@@ -403,7 +403,7 @@ mod tests {
             ],
         )
         .unwrap();
-        let mut program_manager = ProgramManager::<Testnet3>::new(
+        let mut program_manager = ProgramManager::<TestnetV0>::new(
             Some(recipient_private_key),
             None,
             Some(api_client),
