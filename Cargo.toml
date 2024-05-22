@@ -62,4 +62,4 @@ mockall = "0.11.2"
 default = ["snarkvm"]
 snarkvm = ["dep:snarkvm"]
 diesel_postgres = ["dep:diesel", "dep:diesel-async", "dep:deadpool"]
-tauri = ["dep:tauri"]
+# tauri = ["dep:tauri"]
