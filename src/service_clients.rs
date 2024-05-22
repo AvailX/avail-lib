@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock};
 use once_cell::sync::Lazy;
 
 use crate::errors::{AvailError, AvailErrorType, AvailResult};
-use tauri_plugin_http::reqwest;
+use http::request;
 
 pub fn get_rm_client_with_session(
     method: reqwest::Method,
