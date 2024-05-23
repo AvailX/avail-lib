@@ -251,18 +251,18 @@ mod tests {
             None,
         )
         .unwrap();
-        let amount = 100000u64;
+        let amount = 10000u64;
         // let dddddd = 15188722u64;
         let fee = 963388u64;
         // let recipient_address = Address::from_str(TESTNET3_ADDRESS).unwrap();
         let recipient_address =
             Address::from_str("aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp")
                 .unwrap();
-        let transfer_type = TransferType::PublicToPrivate;
+        let transfer_type = TransferType::Public;
         let password = Some("tylerDurden@0xf5");
         let amount_record = None;
         const RECORD_MAINNET: &str = r"{owner:aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp.private,microcredits:3073224u64.private,_nonce:5199634801620992412289862193157265588660085109225328599563543525856471294537group.public}";
-        let fee_record = Some(Record::from_str(RECORD_MAINNET).unwrap()); ////Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap()); //None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //
+        let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); ////Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap()); //None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //
         let program_id = "credits.aleo";
         let network = SupportedNetworks::Testnet3;
         let delegate = true;
@@ -290,7 +290,7 @@ mod tests {
                 program_id,
                 sender,
                 network,
-                delegate,
+                !delegate,
             )
             .await
             .unwrap();
@@ -493,4 +493,127 @@ mod tests {
     //         println!("||||| check ERROR ===> {:?}", e);
     //     }
     // };
+
+    // recurring tests
+    use futures::future::join_all;
+    use std::time::Instant;
+    use tokio::time::Duration;
+    #[tokio::test]
+    async fn stress_test_transfer() {
+        // let st = SESSION.get_session_token().unwrap();
+        SESSION.set_session_token("tylerDurden@0xf5".to_string());
+        let private_key = PrivateKey::<Testnet3>::from_str(
+            "APrivateKey1zkpEa57WrhvNVagKkja6mzU5waS4xFXidKtBNMweupft7JX",
+        )
+        .unwrap();
+        // println!("P KEY: {:?}", private_key.get_address().to_string());
+        let sender = "aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp".to_string();
+
+        // let private_key = PrivateKey::<Testnet3>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
+        let node_api_obscura = env!("TESTNET_API_OBSCURA");
+        let base_url = format!(
+            "https://aleo-testnet3.obscura.build/v1/{}",
+            node_api_obscura
+        );
+        let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
+        // let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
+        let program_manager = ProgramManager::<Testnet3>::new(
+            Some(private_key),
+            None,
+            Some(api_client.clone()),
+            None,
+        )
+        .unwrap();
+        let amount = 10000u64;
+        // let dddddd = 15188722u64;
+        let fee = 963388u64;
+        // let recipient_address = Address::from_str(TESTNET3_ADDRESS).unwrap();
+        let recipient_address =
+            Address::from_str("aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp")
+                .unwrap();
+        let transfer_type = TransferType::Public;
+        let password = Some("tylerDurden@0xf5");
+        let amount_record = None;
+        const RECORD_MAINNET: &str = r"{owner:aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp.private,microcredits:3073224u64.private,_nonce:5199634801620992412289862193157265588660085109225328599563543525856471294537group.public}";
+        let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); ////Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap()); //None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //
+        let program_id = "credits.aleo";
+        let network = SupportedNetworks::Testnet3;
+        let delegate = true;
+
+        let credits_mapping = match api_client
+            .clone()
+            .get_mapping_value(program_id, "account", &sender)
+        {
+            Ok(credits) => credits,
+            Err(e) => {
+                println!("ERROR: {:?}", e);
+                return;
+            }
+        };
+        println!("CREDITS MAPPING: {:?}", credits_mapping);
+
+        let mut handles = vec![];
+        let mut total_time = Duration::new(0, 0);
+
+        for _ in 0..10 {
+            println!("_________________ITERATION_________________");
+            let program_manager = program_manager.clone();
+            let sender = sender.clone();
+            let amount_record = amount_record.clone();
+            let fee_record = fee_record.clone();
+            let network = network.clone();
+            let handle = tokio::spawn(async move {
+                let start = Instant::now();
+                let result = program_manager
+                    .transfer(
+                        amount,
+                        fee,
+                        recipient_address,
+                        transfer_type,
+                        password,
+                        amount_record,
+                        fee_record,
+                        program_id,
+                        sender,
+                        network,
+                        delegate,
+                    )
+                    .await;
+                let duration = start.elapsed();
+                (result, duration)
+            });
+
+            handles.push(handle);
+        }
+
+        let results = join_all(handles).await;
+        let mut successful_transfers = 0;
+        let mut total_duration = Duration::new(0, 0);
+
+        for result in results {
+            match result {
+                Ok((Ok(_), duration)) => {
+                    println!("Transaction successful in {:?}", duration);
+                    successful_transfers += 1;
+                    total_duration += duration;
+                }
+                Ok((Err(e), _)) => {
+                    println!("Transaction failed with error: {:?}", e);
+                }
+                Err(e) => {
+                    println!("Task failed with error: {:?}", e);
+                }
+            }
+        }
+
+        if successful_transfers == 10 {
+            println!("All transactions were successful");
+        } else {
+            println!("Some transactions failed");
+        }
+
+        let average_duration = total_duration / successful_transfers;
+        println!("Total time for all transactions: {:?}", total_duration);
+        println!("Average time per transaction: {:?}", average_duration);
+    }
 }

@@ -480,6 +480,7 @@ dependencies = [
  "diesel",
  "diesel-async",
  "duration-str",
+ "futures",
  "hex",
  "http 1.1.0",
  "jni",

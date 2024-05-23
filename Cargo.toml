@@ -22,6 +22,7 @@ diesel-async = { version = "0.4.1", features = [
     "deadpool",
 ], optional = true }
 duration-str = "0.7.0"
+futures = "0.3.30"
 hex = "0.4.3"
 http = "1.1.0"
 jni = { version = "0.21.1" }
