@@ -290,7 +290,7 @@ mod tests {
                 program_id,
                 sender,
                 network,
-                !delegate,
+                delegate,
             )
             .await
             .unwrap();
@@ -499,6 +499,7 @@ mod tests {
     use std::time::Instant;
     use tokio::time::Duration;
     #[tokio::test]
+
     async fn stress_test_transfer() {
         // let st = SESSION.get_session_token().unwrap();
         SESSION.set_session_token("tylerDurden@0xf5".to_string());
