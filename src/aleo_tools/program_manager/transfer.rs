@@ -220,6 +220,7 @@ mod tests {
     use crate::models::network::SupportedNetworks;
     use crate::service_clients::{get_prover_client_with_session, SESSION};
     use crate::utils::delegate_execution;
+    use chrono::Utc;
     use rusqlite::Transaction;
     use security_framework::authorization;
     use snarkvm::ledger::{query::*, store::helpers::memory::BlockMemory};
@@ -277,7 +278,8 @@ mod tests {
             }
         };
         println!("CREDITS MAPPING: {:?}", credits_mapping);
-
+        // Modify the logic to handle time taken to execute the transfer
+        let start = Instant::now();
         let result = program_manager
             .transfer(
                 amount,
@@ -294,6 +296,8 @@ mod tests {
             )
             .await
             .unwrap();
+        let duration = start.elapsed();
+        println!("Transaction successful in {:?}", duration);
         println!("RES ==> {:?}", result);
     }
     #[tokio::test]
@@ -496,10 +500,27 @@ mod tests {
 
     // recurring tests
     use futures::future::join_all;
-    use std::time::Instant;
+    use std::time::{self, Instant};
     use tokio::time::Duration;
     #[tokio::test]
+    async fn stress_test_ps() {
+        SESSION.set_session_token("tylerDurden@0xf5".to_string());
 
+        for _ in 1..100 {
+            let res = get_prover_client_with_session(reqwest::Method::POST, "test")
+                .unwrap()
+                .send()
+                .await
+                .unwrap();
+            println!("Prover Response{:?}", res);
+            if res.status() == 200 {
+                println!("Success {:?}", res);
+            } else {
+                println!("Error ");
+            }
+        }
+    }
+    #[tokio::test]
     async fn stress_test_transfer() {
         // let st = SESSION.get_session_token().unwrap();
         SESSION.set_session_token("tylerDurden@0xf5".to_string());
@@ -580,6 +601,11 @@ mod tests {
                         delegate,
                     )
                     .await;
+                println!(
+                    "Time taken: {:?} || Timestamp: {:?}",
+                    start.elapsed(),
+                    Utc::now().timestamp()
+                );
                 let duration = start.elapsed();
                 (result, duration)
             });
