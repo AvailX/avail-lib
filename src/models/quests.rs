@@ -17,6 +17,7 @@ pub struct Campaign {
     pub color: String,
     pub points_image: String,
     pub project_name: String,
+    pub owner_id: Uuid,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -37,7 +38,6 @@ pub struct Quest {
     pub expires_on: DateTime<Utc>,
     pub created_on: DateTime<Utc>,
     pub campaign_id: Uuid,
-    pub owner_id: Uuid,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
