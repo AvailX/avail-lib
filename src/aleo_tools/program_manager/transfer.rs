@@ -292,7 +292,7 @@ mod tests {
                 program_id,
                 sender,
                 network,
-                delegate,
+                !delegate,
             )
             .await
             .unwrap();
