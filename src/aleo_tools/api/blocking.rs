@@ -444,10 +444,11 @@ impl<N: Network> AleoAPIClient<N> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use snarkvm::prelude::TestnetV0;
 
     #[test]
     fn test_api_get_blocks() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet3();
         let blocks = client.get_blocks(0, 3).unwrap();
 
         // Check height matches
@@ -462,7 +463,7 @@ mod tests {
 
     #[test]
     fn test_mappings_query() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet3();
         let mappings = client.get_program_mappings("credits.aleo").unwrap();
         // Assert there's 4 mappings in credits.aleo
         assert_eq!(mappings.len(), 4);
@@ -474,11 +475,11 @@ mod tests {
 
     #[test]
     fn test_import_resolution() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet3();
         let imports = client.get_program_imports("imported_add_mul.aleo").unwrap();
-        let id1 = ProgramID::<Testnet3>::from_str("multiply_test.aleo").unwrap();
-        let id2 = ProgramID::<Testnet3>::from_str("double_test.aleo").unwrap();
-        let id3 = ProgramID::<Testnet3>::from_str("addition_test.aleo").unwrap();
+        let id1 = ProgramID::<TestnetV0>::from_str("multiply_test.aleo").unwrap();
+        let id2 = ProgramID::<TestnetV0>::from_str("double_test.aleo").unwrap();
+        let id3 = ProgramID::<TestnetV0>::from_str("addition_test.aleo").unwrap();
 
         let keys = imports.keys();
         println!("Imports: {keys:?}");
