@@ -219,7 +219,7 @@ mod tests {
         // Wait for the node to bootup
         thread::sleep(std::time::Duration::from_secs(5));
 
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
 
         let temp_dir =
             setup_directory("aleo_test_deploy", CREDITS_IMPORT_TEST_PROGRAM, vec![]).unwrap();
@@ -334,7 +334,7 @@ mod tests {
         let record_2000000001_microcredits =
             Record::<TestnetV0, Plaintext<TestnetV0>>::from_str(RECORD_2000000001_MICROCREDITS)
                 .unwrap();
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
         let randomized_program = random_program();
         let randomized_program_id = randomized_program.id().to_string();
         let randomized_program_string = randomized_program.to_string();

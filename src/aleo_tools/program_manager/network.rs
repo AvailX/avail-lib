@@ -105,7 +105,7 @@ mod tests {
     #[test]
     fn test_network_functionality_works_as_expected() {
         let credits = snarkvm::synthesizer::Program::<TestnetV0>::credits().unwrap();
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
         let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
         // Create a temp dir without proper programs to test that the hybrid client works even if the local resource directory doesn't exist
         let temp_dir = std::env::temp_dir().join("no_op");
