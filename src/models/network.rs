@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub enum SupportedNetworks {
-    Testnet3,
+    Testnet,
 }
 
 use std::str::FromStr;
@@ -19,7 +19,7 @@ impl FromStr for SupportedNetworks {
 impl SupportedNetworks {
     fn parse_network(network_str: &str) -> AvailResult<Self> {
         let supported_network = match network_str {
-            "testnet3" => SupportedNetworks::Testnet3,
+            "testnet" => SupportedNetworks::Testnet,
             _ => {
                 return Err(AvailError::new(
                     AvailErrorType::Network,
