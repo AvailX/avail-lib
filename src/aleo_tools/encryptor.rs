@@ -104,7 +104,7 @@ impl<N: Network> Encryptor<N> {
 mod tests {
     use super::*;
 
-    use snarkvm::console::{network::Testnet3 as CurrentNetwork, prelude::TestRng};
+    use snarkvm::console::{network::TestnetV0 as CurrentNetwork, prelude::TestRng};
     /* View Key Tests */
 
     /* Private Key Test */

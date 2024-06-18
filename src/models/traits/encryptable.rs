@@ -118,7 +118,7 @@ impl<N: Network> EncryptedStruct<N> {
 mod tests {
 
     use serde::Deserialize;
-    use snarkvm::prelude::Testnet3;
+    use snarkvm::prelude::TestnetV0;
     use std::str::FromStr;
 
     use super::*;
@@ -134,8 +134,8 @@ mod tests {
         let public_key = "aleo15z3mag4mtdcyh0upephc4dcawfe22znnfkgtxmx3y5xx36q4fvqq93cnff";
         let vk = "AViewKey1tBryiVGTEnJEfVGxa1spRKLfiwPqc7nTnkv62izdSZcC";
 
-        let address = Address::<Testnet3>::from_str(public_key).unwrap();
-        let vk = ViewKey::<Testnet3>::from_str(vk).unwrap();
+        let address = Address::<TestnetV0>::from_str(public_key).unwrap();
+        let vk = ViewKey::<TestnetV0>::from_str(vk).unwrap();
 
         let p = Person {
             name: String::from("John"),
@@ -172,8 +172,8 @@ mod tests {
         let public_key = "aleo15z3mag4mtdcyh0upephc4dcawfe22znnfkgtxmx3y5xx36q4fvqq93cnff";
         let vk = "AViewKey1tBryiVGTEnJEfVGxa1spRKLfiwPqc7nTnkv62izdSZcC";
 
-        let address = Address::<Testnet3>::from_str(public_key).unwrap();
-        let vk = ViewKey::<Testnet3>::from_str(vk).unwrap();
+        let address = Address::<TestnetV0>::from_str(public_key).unwrap();
+        let vk = ViewKey::<TestnetV0>::from_str(vk).unwrap();
 
         let contract = Contract {
             header: "Header Content".to_string(),

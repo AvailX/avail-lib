@@ -34,10 +34,10 @@ rusqlite = { version = "0.31.0", features = ["bundled"] }
 rust-argon2 = "1.0.0"
 serde = { version = "1.0.188", features = ["derive"] }
 serde_json = "1.0.107"
-snarkvm = { version = "0.16.17", optional = true }
-tauri = { version = "2.0.0-beta.14", features = [], optional = true }
-# tauri-plugin-http = { version = "2.0.0-beta.7", features = ["cookies"] }
-tokio = { version = "1.32.0", features = ["full"] }
+snarkvm = { version = "0.16.19", features = [
+], git = "https://github.com/AleoNet/snarkVM", branch = "testnet-beta", optional = true }
+tauri = { version = "2.0.0-beta.17", features = [], optional = true }
+tokio = "1.32.0"
 tracing = "0.1.37"
 ureq = { version = "2.7.1", features = ["json"] }
 url = "2.4.1"

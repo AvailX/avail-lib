@@ -98,20 +98,20 @@ mod tests {
         test_utils::{random_program, GENERIC_PROGRAM_BODY},
     };
     use crate::models::constants::TESTNET_PRIVATE_KEY;
-    use snarkvm::console::{account::PrivateKey, network::Testnet3};
+    use snarkvm::console::{account::PrivateKey, network::TestnetV0};
 
     use std::{ops::Add, str::FromStr};
 
     #[test]
     fn test_network_functionality_works_as_expected() {
-        let credits = snarkvm::synthesizer::Program::<Testnet3>::credits().unwrap();
-        let api_client = AleoAPIClient::<Testnet3>::testnet3();
-        let private_key = PrivateKey::<Testnet3>::from_str(TESTNET_PRIVATE_KEY).unwrap();
+        let credits = snarkvm::synthesizer::Program::<TestnetV0>::credits().unwrap();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
+        let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
         // Create a temp dir without proper programs to test that the hybrid client works even if the local resource directory doesn't exist
         let temp_dir = std::env::temp_dir().join("no_op");
         let _ = std::fs::create_dir(&temp_dir);
 
-        let program_manager = ProgramManager::<Testnet3>::new(
+        let program_manager = ProgramManager::<TestnetV0>::new(
             Some(private_key),
             None,
             Some(api_client),
@@ -144,7 +144,7 @@ mod tests {
         let wrong_hello_program_string =
             String::from("program credits.aleo;\n").add(GENERIC_PROGRAM_BODY);
         let wrong_hello_program =
-            Program::<Testnet3>::from_str(&wrong_hello_program_string).unwrap();
+            Program::<TestnetV0>::from_str(&wrong_hello_program_string).unwrap();
         let state_mismatch = program_manager
             .on_chain_program_state(&wrong_hello_program)
             .unwrap();
