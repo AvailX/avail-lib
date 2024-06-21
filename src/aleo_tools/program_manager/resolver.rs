@@ -197,7 +197,7 @@ mod tests {
 
         let result = catch_unwind(|| {
             // Create a program manager with file system and network access
-            let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+            let api_client = AleoAPIClient::<TestnetV0>::testnet();
             let program_manager = ProgramManager::<TestnetV0>::new(
                 Some(private_key),
                 None,
@@ -259,7 +259,7 @@ mod tests {
     fn test_network_program_resolution() {
         // Create a program manager with network access only
         let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
         let program_manager =
             ProgramManager::<TestnetV0>::new(Some(private_key), None, Some(api_client), None)
                 .unwrap();
@@ -274,7 +274,7 @@ mod tests {
         let credits = Program::<TestnetV0>::credits().unwrap();
         // Create a program manager with network access only
         let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
         let program_manager =
             ProgramManager::<TestnetV0>::new(Some(private_key), None, Some(api_client), None)
                 .unwrap();
@@ -296,7 +296,7 @@ mod tests {
         // Create a program with a random string as the program id
         let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
         let random_program = random_program_id(16);
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
 
         // Create a program manager with network access only
         let program_manager =
@@ -312,7 +312,7 @@ mod tests {
     fn test_network_resolution_produces_resolution_errors_for_bad_imports() {
         // Create program manager with only network access
         let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET_PRIVATE_KEY).unwrap();
-        let api_client = AleoAPIClient::<TestnetV0>::testnet3();
+        let api_client = AleoAPIClient::<TestnetV0>::testnet();
         let program_manager =
             ProgramManager::<TestnetV0>::new(Some(private_key), None, Some(api_client), None)
                 .unwrap();

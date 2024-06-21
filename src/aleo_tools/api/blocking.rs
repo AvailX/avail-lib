@@ -72,13 +72,13 @@ impl<N: Network> AleoAPIClient<N> {
         );
         match self.client.get(&url).call()?.into_json() {
             Ok(blocks) => Ok(blocks),
-            Err(error) =>{
+            Err(error) => {
                 println!("Get Blocks Error {}", error.to_string());
                 match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
                 true => bail!("zero txs error"),
                 false => bail!("Failed to parse blocks {start_height} (inclusive) to {end_height} (exclusive): {error}"),
              }
-          }
+            }
         }
     }
 
@@ -448,7 +448,7 @@ mod tests {
 
     #[test]
     fn test_api_get_blocks() {
-        let client = AleoAPIClient::<TestnetV0>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let blocks = client.get_blocks(0, 3).unwrap();
 
         // Check height matches
@@ -463,7 +463,7 @@ mod tests {
 
     #[test]
     fn test_mappings_query() {
-        let client = AleoAPIClient::<TestnetV0>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let mappings = client.get_program_mappings("credits.aleo").unwrap();
         // Assert there's 4 mappings in credits.aleo
         assert_eq!(mappings.len(), 4);
@@ -475,7 +475,7 @@ mod tests {
 
     #[test]
     fn test_import_resolution() {
-        let client = AleoAPIClient::<TestnetV0>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let imports = client.get_program_imports("imported_add_mul.aleo").unwrap();
         let id1 = ProgramID::<TestnetV0>::from_str("multiply_test.aleo").unwrap();
         let id2 = ProgramID::<TestnetV0>::from_str("double_test.aleo").unwrap();
