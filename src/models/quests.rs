@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use snarkvm::prelude::{Field,Network};
+use snarkvm::prelude::{Field, Network};
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Campaign {
@@ -16,7 +16,8 @@ pub struct Campaign {
     pub profile_image: String,
     pub color: String,
     pub points_image: String,
-    pub project_name: String
+    pub project_name: String,
+    pub owner: String,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -51,7 +52,7 @@ pub struct Task {
     pub points: i32,
 }
 
-#[derive(Deserialize, Serialize, Debug,Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct Reward {
     pub id: Uuid,
     pub collection_name: String,
@@ -59,11 +60,11 @@ pub struct Reward {
     pub method: RewardMethodCommon,
 }
 
-#[derive(Deserialize, Serialize, Debug,Clone)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub enum RewardMethodCommon {
     LuckyDraw,
     LeaderBoard,
-    FCFS
+    FCFS,
 }
 
 /* API Request/Response types */
@@ -74,12 +75,12 @@ pub struct QuestsResponse {
 
 #[derive(Deserialize, Serialize, Debug)]
 #[serde(bound = "N: Network")]
-pub struct VerifyTaskRequest<N:Network> {
+pub struct VerifyTaskRequest<N: Network> {
     pub task_id: Uuid,
     pub confirmation_height: u32,
     pub transaction_id: N::TransactionID,
     pub transition_id: N::TransitionID,
-    pub tvk : Field<N>
+    pub tvk: Field<N>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -96,13 +97,13 @@ impl VerifyTaskResponse {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct WhitelistResponse {
     pub collection_name: String,
-    pub amount: i32
+    pub amount: i32,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct PointsResponse {
     pub points: i32,
-    pub img_src: String
+    pub img_src: String,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
