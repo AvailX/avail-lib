@@ -65,9 +65,9 @@ impl<N: Network> AleoAPIClient<N> {
                     .as_str()
                 {
                     println!("Counter: {:?}", counter);
-                    let new_counter = format!("{}u64", counter);
+                    let new_counter = u64::from_str(counter).unwrap();
                     v["solutions"]["solutions"]["solutions"][0]["partial_solution"]["counter"] =
-                        serde_json::Value::String(new_counter);
+                        serde_json::Value::Number(new_counter.into());
                 }
                 let modified_json_str = serde_json::to_string(&v)?;
                 println!("Modified JSON: {:?}", modified_json_str);
