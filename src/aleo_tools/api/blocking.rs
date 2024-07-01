@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with the Aleo SDK library. If not, see <https://www.gnu.org/licenses/>.
 
-use std::ops::Range;
+use std::{fmt::format, ops::Range};
 
 use super::*;
 use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
@@ -54,6 +54,16 @@ impl<N: Network> AleoAPIClient<N> {
     /// Get the block matching the specific height from the network
     pub fn get_block(&self, height: u32) -> Result<Block<N>> {
         let url = format!("{}/{}/block/{height}", self.base_url, self.network_id);
+        let block_str: String = match self.client.get(&url).call() {
+            Ok(block) => {
+                let block_str = block.into_string()?;
+                println!("Block: {:?}", block_str);
+                block_str
+            }
+            Err(error) => {
+                bail!("Failed to parse block {height}: {error}")
+            }
+        };
         match self.client.get(&url).call()?.into_json() {
             Ok(block) => Ok(block),
             Err(error) => bail!("Failed to parse block {height}: {error}"),
