@@ -18,7 +18,6 @@ use std::{fmt::format, ops::Range};
 
 use super::*;
 use crate::aleo_tools::program_manager::Credits;
-use serde_json::Value;
 use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
 
 #[cfg(not(feature = "async"))]
@@ -58,12 +57,12 @@ impl<N: Network> AleoAPIClient<N> {
             Ok(block) => {
                 let block_str = block.into_string()?;
                 println!("Block: {:?}", block_str);
-                let mut v: Value = serde_json::from_str(&block_str)?;
+                let mut v: serde_json::Value = serde_json::from_str(&block_str)?;
 
                 // Extract the "counter" field and modify it
                 if let Some(counter) = v["counter"].as_str() {
                     let new_counter = format!("{}u64", counter);
-                    v["counter"] = Value::String(new_counter);
+                    v["counter"] = serde_json::Value::String(new_counter);
                 }
                 let modified_json_str = serde_json::to_string(&v)?;
                 println!("Modified JSON: {:?}", modified_json_str);
