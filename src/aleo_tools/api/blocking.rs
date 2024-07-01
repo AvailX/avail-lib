@@ -60,7 +60,10 @@ impl<N: Network> AleoAPIClient<N> {
                 let mut v: serde_json::Value = serde_json::from_str(&block_str)?;
                 println!("Parsed JSON: {:?}", v);
                 // Extract the "counter" field and modify it
-                if let Some(counter) = v["counter"].as_str() {
+                if let Some(counter) = v["solutions"]["solutions"]["solutions"][0]
+                    ["partial_solution"]["counter"]
+                    .as_str()
+                {
                     println!("Counter: {:?}", counter);
                     let new_counter = format!("{}u64", counter);
                     v["counter"] = serde_json::Value::String(new_counter);
