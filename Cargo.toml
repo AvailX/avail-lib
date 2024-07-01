@@ -45,7 +45,6 @@ uuid = { version = "1.4.1", features = [
     "macro-diagnostics",
     "serde",
 ] }
-anyhow = "1.0.86"
 
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
