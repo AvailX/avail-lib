@@ -58,16 +58,20 @@ impl<N: Network> AleoAPIClient<N> {
             Ok(block) => {
                 let block_str = block.into_string()?;
                 println!("Block: {:?}", block_str);
-                block_str
+                let modified_block_str = block_str.replace("\"counter\":\"", "\"counter\":\"u64");
+                println!("Block: {:?}", modified_block_str);
+                modified_block_str
             }
             Err(error) => {
                 bail!("Failed to parse block {height}: {error}")
             }
         };
-        match self.client.get(&url).call()?.into_json() {
-            Ok(block) => Ok(block),
-            Err(error) => bail!("Failed to parse block {height}: {error}"),
-        }
+        let fblock: Block<N> = serde_json::from_str(&block_str)?;
+        // match self.client.get(&url).call()?.into_json() {
+        //     Ok(block) => Ok(block),
+        //     Err(error) => bail!("Failed to parse block {height}: {error}"),
+        // }
+        Ok(fblock)
     }
 
     /// Get a range of blocks from the network (limited 50 blocks at a time)
