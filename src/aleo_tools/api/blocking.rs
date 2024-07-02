@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with the Aleo SDK library. If not, see <https://www.gnu.org/licenses/>.
 
-use std::ops::Range;
+use std::{fmt::format, ops::Range};
 
 use super::*;
-use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
-
 use crate::aleo_tools::program_manager::Credits;
+use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
 
 #[cfg(not(feature = "async"))]
 #[allow(clippy::type_complexity)]
@@ -54,8 +53,13 @@ impl<N: Network> AleoAPIClient<N> {
     /// Get the block matching the specific height from the network
     pub fn get_block(&self, height: u32) -> Result<Block<N>> {
         let url = format!("{}/{}/block/{height}", self.base_url, self.network_id);
-        match self.client.get(&url).call()?.into_json() {
-            Ok(block) => Ok(block),
+        println!("URL: {:?}", url);
+
+        match self.client.get(&url).call() {
+            Ok(block) => {
+                let block_json: Block<N> = block.into_json()?;
+                Ok(block_json)
+            }
             Err(error) => bail!("Failed to parse block {height}: {error}"),
         }
     }
@@ -72,13 +76,13 @@ impl<N: Network> AleoAPIClient<N> {
         );
         match self.client.get(&url).call()?.into_json() {
             Ok(blocks) => Ok(blocks),
-            Err(error) =>{
+            Err(error) => {
                 println!("Get Blocks Error {}", error.to_string());
                 match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
                 true => bail!("zero txs error"),
                 false => bail!("Failed to parse blocks {start_height} (inclusive) to {end_height} (exclusive): {error}"),
              }
-          }
+            }
         }
     }
 
@@ -444,10 +448,20 @@ impl<N: Network> AleoAPIClient<N> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use snarkvm::prelude::TestnetV0;
 
     #[test]
+    fn test_api_get_blocks_obscura() {
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_blocks(65900, 65910).unwrap();
+
+        // Check height matches
+        println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.len(), 10);
+    }
+    #[test]
     fn test_api_get_blocks() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let blocks = client.get_blocks(0, 3).unwrap();
 
         // Check height matches
@@ -459,10 +473,18 @@ mod tests {
         assert_eq!(blocks[1].previous_hash(), blocks[0].hash());
         assert_eq!(blocks[2].previous_hash(), blocks[1].hash());
     }
+    #[test]
+    fn test_api_get_block() {
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_block(69785).unwrap();
+
+        println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.height(), 69785);
+    }
 
     #[test]
     fn test_mappings_query() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let mappings = client.get_program_mappings("credits.aleo").unwrap();
         // Assert there's 4 mappings in credits.aleo
         assert_eq!(mappings.len(), 4);
@@ -474,11 +496,11 @@ mod tests {
 
     #[test]
     fn test_import_resolution() {
-        let client = AleoAPIClient::<Testnet3>::testnet3();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
         let imports = client.get_program_imports("imported_add_mul.aleo").unwrap();
-        let id1 = ProgramID::<Testnet3>::from_str("multiply_test.aleo").unwrap();
-        let id2 = ProgramID::<Testnet3>::from_str("double_test.aleo").unwrap();
-        let id3 = ProgramID::<Testnet3>::from_str("addition_test.aleo").unwrap();
+        let id1 = ProgramID::<TestnetV0>::from_str("multiply_test.aleo").unwrap();
+        let id2 = ProgramID::<TestnetV0>::from_str("double_test.aleo").unwrap();
+        let id3 = ProgramID::<TestnetV0>::from_str("addition_test.aleo").unwrap();
 
         let keys = imports.keys();
         println!("Imports: {keys:?}");

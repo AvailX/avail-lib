@@ -34,7 +34,9 @@ pub struct VerifyUserRequest {
 pub struct VerifyUserResponse {
     pub exists: bool,
     pub backup: bool,
+    pub user_id: Uuid,
 }
+
 /* Session */
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Session {
@@ -76,10 +78,10 @@ fn test_encrypt_view_key() {
     use crate::aleo_tools::encryptor::Encryptor;
 
     let mut rng = TestRng::default();
-    let private_key = PrivateKey::<Testnet3>::new(&mut rng).unwrap();
-    let view_key = ViewKey::<Testnet3>::try_from(&private_key).unwrap();
-    let enc = Encryptor::<Testnet3>::encrypt_view_key_with_secret(&view_key, "mypassword").unwrap();
+    let private_key = PrivateKey::<TestnetV0>::new(&mut rng).unwrap();
+    let view_key = ViewKey::<TestnetV0>::try_from(&private_key).unwrap();
+    let enc = Encryptor::<TestnetV0>::encrypt_view_key_with_secret(&view_key, "mypassword").unwrap();
     let recovered_view_key =
-        Encryptor::<Testnet3>::decrypt_view_key_with_secret(&enc, "mypassword").unwrap();
+        Encryptor::<TestnetV0>::decrypt_view_key_with_secret(&enc, "mypassword").unwrap();
     assert_eq!(view_key, recovered_view_key);
 }
