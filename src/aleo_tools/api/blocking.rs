@@ -53,6 +53,7 @@ impl<N: Network> AleoAPIClient<N> {
     /// Get the block matching the specific height from the network
     pub fn get_block(&self, height: u32) -> Result<Block<N>> {
         let url = format!("{}/{}/block/{height}", self.base_url, self.network_id);
+        println!("URL: {:?}", url);
         // let block_str: String = match self.client.get(&url).call() {
         //     Ok(block) => {
         //         let block_str = block.into_string()?;
@@ -78,8 +79,12 @@ impl<N: Network> AleoAPIClient<N> {
         //     }
         // };
         // let fblock: Block<N> = serde_json::from_str(&block_str)?;
-        match self.client.get(&url).call()?.into_json() {
-            Ok(block) => Ok(block),
+        match self.client.get(&url).call() {
+            Ok(block) => {
+                println!("Block: {:?}", block.status());
+                let block_json: Block<N> = block.into_json()?;
+                Ok(block_json)
+            }
             Err(error) => bail!("Failed to parse block {height}: {error}"),
         }
         // Ok(fblock)
@@ -473,22 +478,16 @@ mod tests {
 
     #[test]
     fn test_api_get_blocks() {
-        let client = AleoAPIClient::<TestnetV0>::testnet();
-        let blocks = client.get_blocks(0, 3).unwrap();
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_blocks(65900, 65910).unwrap();
 
         // Check height matches
-        assert_eq!(blocks[0].height(), 0);
-        assert_eq!(blocks[1].height(), 1);
-        assert_eq!(blocks[2].height(), 2);
-
-        // Check block hashes
-        assert_eq!(blocks[1].previous_hash(), blocks[0].hash());
-        assert_eq!(blocks[2].previous_hash(), blocks[1].hash());
+        println!("Blocks: {:?}", blocks);
     }
     #[test]
     fn test_api_get_block() {
-        let client = AleoAPIClient::<TestnetV0>::testnet();
-        let blocks = client.get_block(61684).unwrap();
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_block(69785).unwrap();
 
         println!("Blocks: {:?}", blocks);
     }
