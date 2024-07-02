@@ -451,12 +451,27 @@ mod tests {
     use snarkvm::prelude::TestnetV0;
 
     #[test]
-    fn test_api_get_blocks() {
+    fn test_api_get_blocks_obscura() {
         let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
         let blocks = client.get_blocks(65900, 65910).unwrap();
 
         // Check height matches
         println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.len(), 10);
+    }
+    #[test]
+    fn test_api_get_blocks() {
+        let client = AleoAPIClient::<TestnetV0>::testnet();
+        let blocks = client.get_blocks(0, 3).unwrap();
+
+        // Check height matches
+        assert_eq!(blocks[0].height(), 0);
+        assert_eq!(blocks[1].height(), 1);
+        assert_eq!(blocks[2].height(), 2);
+
+        // Check block hashes
+        assert_eq!(blocks[1].previous_hash(), blocks[0].hash());
+        assert_eq!(blocks[2].previous_hash(), blocks[1].hash());
     }
     #[test]
     fn test_api_get_block() {
@@ -464,6 +479,7 @@ mod tests {
         let blocks = client.get_block(69785).unwrap();
 
         println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.height(), 69785);
     }
 
     #[test]
