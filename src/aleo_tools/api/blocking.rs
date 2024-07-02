@@ -485,6 +485,13 @@ mod tests {
         assert_eq!(blocks[1].previous_hash(), blocks[0].hash());
         assert_eq!(blocks[2].previous_hash(), blocks[1].hash());
     }
+    #[test]
+    fn test_api_get_block() {
+        let client = AleoAPIClient::<TestnetV0>::testnet();
+        let blocks = client.get_block(61684).unwrap();
+
+        println!("Blocks: {:?}", blocks);
+    }
 
     #[test]
     fn test_mappings_query() {

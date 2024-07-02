@@ -66,13 +66,14 @@ dependencies = [
 
 [[package]]
 name = "ahash"
-version = "0.8.3"
+version = "0.8.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c99f64d1e06488f620f932677e24bc6e2897582980441ae90a671415bd7ec2f"
+checksum = "e89da841a80418a9b391ebaea17f5c112ffaaa96f621d2c285b5174da76b9011"
 dependencies = [
  "cfg-if",
  "once_cell",
  "version_check",
+ "zerocopy",
 ]
 
 [[package]]
@@ -2235,9 +2236,9 @@ checksum = "8a9ee70c43aaf417c914396645a0fa852624801b24ebb7ae78fe8272889ac888"
 
 [[package]]
 name = "hashbrown"
-version = "0.14.0"
+version = "0.14.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c6201b9ff9fd90a5a3bac2e56a830d0caa509576f0e503818ee82c181b3437a"
+checksum = "e5274423e17b7c9fc20b6e7e208532f9b19825d82dfd615708b70edd83df41f1"
 dependencies = [
  "ahash",
  "allocator-api2",
@@ -2249,7 +2250,7 @@ version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8094feaf31ff591f651a2664fb9cfd92bba7a60ce3197265e9482ebe753c8f7"
 dependencies = [
- "hashbrown 0.14.0",
+ "hashbrown 0.14.5",
 ]
 
 [[package]]
@@ -2514,12 +2515,12 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.0.1"
+version = "2.2.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad227c3af19d4914570ad36d30409928b75967c298feb9ea1969db3a610bb14e"
+checksum = "168fb715dda47215e360912c096649d23d58bf392ac62f73919e831745e40f26"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.0",
+ "hashbrown 0.14.5",
  "rayon",
  "serde",
 ]
@@ -2863,7 +2864,7 @@ version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d3262e75e648fce39813cb56ac41f3c3e3f65217ebf3844d818d1f9398cfb0dc"
 dependencies = [
- "hashbrown 0.14.0",
+ "hashbrown 0.14.5",
 ]
 
 [[package]]
@@ -4553,11 +4554,11 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.107"
+version = "1.0.120"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6b420ce6e3d8bd882e9b243c6eed35dbc9a6110c9769e74b584e0d68d1f20c65"
+checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itoa 1.0.9",
  "ryu",
  "serde",
@@ -4605,7 +4606,7 @@ dependencies = [
  "chrono",
  "hex",
  "indexmap 1.9.3",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "serde",
  "serde_json",
  "serde_with_macros",
@@ -4742,7 +4743,7 @@ dependencies = [
  "clap",
  "colored",
  "dotenvy",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "num-format",
  "once_cell",
  "parking_lot",
@@ -4771,9 +4772,9 @@ dependencies = [
  "blake2",
  "cfg-if",
  "fxhash",
- "hashbrown 0.14.0",
+ "hashbrown 0.14.5",
  "hex",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itertools 0.11.0",
  "num-traits",
  "parking_lot",
@@ -4841,7 +4842,7 @@ name = "snarkvm-circuit-environment"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itertools 0.11.0",
  "nom",
  "num-traits",
@@ -5033,7 +5034,7 @@ version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
  "anyhow",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itertools 0.11.0",
  "lazy_static",
  "once_cell",
@@ -5076,7 +5077,7 @@ dependencies = [
  "enum-iterator",
  "enum_index",
  "enum_index_derive",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "num-derive",
  "num-traits",
  "once_cell",
@@ -5216,7 +5217,7 @@ source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f939
 dependencies = [
  "aleo-std",
  "anyhow",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "parking_lot",
  "rand 0.8.5",
  "rayon",
@@ -5250,7 +5251,7 @@ name = "snarkvm-ledger-block"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "rayon",
  "serde_json",
  "snarkvm-console",
@@ -5269,7 +5270,7 @@ name = "snarkvm-ledger-committee"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "rayon",
  "serde_json",
  "snarkvm-console",
@@ -5294,7 +5295,7 @@ name = "snarkvm-ledger-narwhal-batch-certificate"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "rayon",
  "serde_json",
  "snarkvm-console",
@@ -5307,7 +5308,7 @@ name = "snarkvm-ledger-narwhal-batch-header"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "rayon",
  "serde_json",
  "snarkvm-console",
@@ -5330,7 +5331,7 @@ name = "snarkvm-ledger-narwhal-subdag"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "rayon",
  "serde_json",
  "snarkvm-console",
@@ -5370,7 +5371,7 @@ dependencies = [
  "aleo-std",
  "anyhow",
  "bincode",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "lru",
  "once_cell",
  "parking_lot",
@@ -5390,7 +5391,7 @@ dependencies = [
  "aleo-std",
  "anyhow",
  "colored",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "lru",
  "parking_lot",
  "rand 0.8.5",
@@ -5424,7 +5425,7 @@ dependencies = [
  "aleo-std-storage",
  "anyhow",
  "bincode",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "parking_lot",
  "rayon",
  "serde",
@@ -5451,7 +5452,7 @@ dependencies = [
  "colored",
  "curl",
  "hex",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itertools 0.11.0",
  "lazy_static",
  "parking_lot",
@@ -5471,7 +5472,7 @@ source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f939
 dependencies = [
  "aleo-std",
  "anyhow",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "itertools 0.11.0",
  "lru",
  "parking_lot",
@@ -5501,7 +5502,7 @@ source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f939
 dependencies = [
  "aleo-std",
  "colored",
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "once_cell",
  "parking_lot",
  "rand 0.8.5",
@@ -5522,7 +5523,7 @@ name = "snarkvm-synthesizer-program"
 version = "0.16.19"
 source = "git+https://github.com/AleoNet/snarkVM?rev=d170a9f#d170a9f7c5ef980f9392301dc899dee355599ca6"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "paste",
  "rand 0.8.5",
  "rand_chacha 0.3.1",
@@ -6284,7 +6285,7 @@ version = "0.19.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b5bb770da30e5cbfde35a2d7b9b8a2c4b8ef89548a7a6aeab5c9a576e3e7421"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "serde",
  "serde_spanned",
  "toml_datetime",
@@ -6297,7 +6298,7 @@ version = "0.20.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "396e4d48bbb2b7554c944bde63101b5ae446cff6ec4a24227428f15eb72ef338"
 dependencies = [
- "indexmap 2.0.1",
+ "indexmap 2.2.6",
  "serde",
  "serde_spanned",
  "toml_datetime",
@@ -7458,6 +7459,26 @@ dependencies = [
  "serde",
  "static_assertions",
  "zvariant",
+]
+
+[[package]]
+name = "zerocopy"
+version = "0.7.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ae87e3fcd617500e5d106f0380cf7b77f3c6092aae37191433159dda23cfb087"
+dependencies = [
+ "zerocopy-derive",
+]
+
+[[package]]
+name = "zerocopy-derive"
+version = "0.7.34"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "15e934569e47891f7d9411f1a451d947a60e000ab3bd24fbb970f000387d1b3b"
+dependencies = [
+ "proc-macro2",
+ "quote 1.0.36",
+ "syn 2.0.58",
 ]
 
 [[package]]
