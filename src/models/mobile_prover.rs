@@ -18,7 +18,7 @@ use snarkvm::prelude::CryptoRng;
 use snarkvm::prelude::Network;
 use snarkvm::prelude::Rng;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 // #[derive(Clone)]
 // #[serde(bound = "N: Network")]
 // pub struct ProverRequest<N: Network> {

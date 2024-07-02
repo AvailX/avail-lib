@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock};
 use once_cell::sync::Lazy;
 
 use crate::errors::{AvailError, AvailErrorType, AvailResult};
-use reqwest;
+use http::request;
 
 pub fn get_rm_client_with_session(
     method: reqwest::Method,
@@ -116,7 +116,7 @@ pub fn get_prover_client_with_session(
     let cookie_value = format!("{}={}", cookie_name, session);
 
     // let url = format!("{}/prover/{}", api, path);
-    let url = format!("http://192.168.0.137:8000/prover/{}", path);
+    let url = format!("http://localhost:8000/prover/{}", path);
 
     let request = client
         .request(method, url)
