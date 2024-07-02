@@ -7,6 +7,7 @@ edition = "2021"
 
 [dependencies]
 snarkvm = { features = [
+    "wasm",
 ], git = "https://github.com/AleoNet/snarkVM", rev = "d170a9f", optional = true }
 aes-gcm = "0.10.2"
 app_dirs = { package = "app_dirs2", version = "2.5" }
