@@ -32,6 +32,14 @@ impl<N: Network> AleoAPIClient<N> {
         Self::new("https://api.explorer.aleo.org/v1", "testnet").unwrap()
     }
 
+    pub fn testnet_obscura() -> Self {
+        Self::new(
+            "https://aleo-testnetbeta.obscura.network/v1/92acf30f-5cea-4679-880c-f06e9a7e8465",
+            "testnet",
+        )
+        .unwrap()
+    }
+
     pub fn local_testnet(port: &str, ip: &str) -> Self {
         Self::new(&format!("http://{}:{}", ip, port), "testnet").unwrap()
     }

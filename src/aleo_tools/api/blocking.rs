@@ -14,12 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with the Aleo SDK library. If not, see <https://www.gnu.org/licenses/>.
 
-use std::ops::Range;
+use std::{fmt::format, ops::Range};
 
 use super::*;
-use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
-
 use crate::aleo_tools::program_manager::Credits;
+use snarkvm::{circuit::prelude::IndexMap, ledger::block::*};
 
 #[cfg(not(feature = "async"))]
 #[allow(clippy::type_complexity)]
@@ -54,8 +53,13 @@ impl<N: Network> AleoAPIClient<N> {
     /// Get the block matching the specific height from the network
     pub fn get_block(&self, height: u32) -> Result<Block<N>> {
         let url = format!("{}/{}/block/{height}", self.base_url, self.network_id);
-        match self.client.get(&url).call()?.into_json() {
-            Ok(block) => Ok(block),
+        println!("URL: {:?}", url);
+
+        match self.client.get(&url).call() {
+            Ok(block) => {
+                let block_json: Block<N> = block.into_json()?;
+                Ok(block_json)
+            }
             Err(error) => bail!("Failed to parse block {height}: {error}"),
         }
     }
@@ -447,6 +451,15 @@ mod tests {
     use snarkvm::prelude::TestnetV0;
 
     #[test]
+    fn test_api_get_blocks_obscura() {
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_blocks(65900, 65910).unwrap();
+
+        // Check height matches
+        println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.len(), 10);
+    }
+    #[test]
     fn test_api_get_blocks() {
         let client = AleoAPIClient::<TestnetV0>::testnet();
         let blocks = client.get_blocks(0, 3).unwrap();
@@ -459,6 +472,14 @@ mod tests {
         // Check block hashes
         assert_eq!(blocks[1].previous_hash(), blocks[0].hash());
         assert_eq!(blocks[2].previous_hash(), blocks[1].hash());
+    }
+    #[test]
+    fn test_api_get_block() {
+        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
+        let blocks = client.get_block(69785).unwrap();
+
+        println!("Blocks: {:?}", blocks);
+        assert_eq!(blocks.height(), 69785);
     }
 
     #[test]
