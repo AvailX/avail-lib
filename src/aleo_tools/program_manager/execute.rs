@@ -233,7 +233,7 @@ impl<N: Network> ProgramManager<N> {
         let execution =
             trace.prove_execution::<A, _>(&locator.to_string(), &mut rand::thread_rng())?;
         // Add the fee data to the Avail Fee Estimation Microservice
-        let (fee, (_storage_fee, _namespace_fee)) = execution_cost(&vm, &execution)?;
+        let (fee, (_storage_fee, _namespace_fee, _temp_val)) = execution_cost(&vm.process(), &execution)?;
         Ok((fee, (_storage_fee, _namespace_fee), execution.clone()))
     }
     /// Estimate the finalize fee component for executing a function. This fee is additional to the
@@ -249,10 +249,12 @@ impl<N: Network> ProgramManager<N> {
         let function_name = function
             .try_into()
             .map_err(|_| anyhow!("Invalid function name"))?;
-        match program.get_function(&function_name)?.finalize_logic() {
-            Some(finalize) => cost_in_microcredits(finalize),
-            None => Ok(0u64),
-        }
+        // match program.get_function(&function_name)?.finalize_logic() {
+        //     Some(finalize) => cost_in_microcredits(finalize),
+        //     None => Ok(0u64),
+        // }
+        // TEMP FIX FOR snarkVM CHANGES
+        Ok(0u64)
     }
 }
 
