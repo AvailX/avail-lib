@@ -463,7 +463,7 @@ mod tests {
     //         node_api_obscura
     //     );
 
-    //     let api_client = AleoAPIClient::<N>::new(&base_url, "testnet3")?;
+    //     let api_client = AleoAPIClient::<N>::new(&base_url, testnet)?;
 
     //     Ok(api_client)
     // }
@@ -524,22 +524,22 @@ mod tests {
     async fn stress_test_transfer() {
         // let st = SESSION.get_session_token().unwrap();
         SESSION.set_session_token("tylerDurden@0xf5".to_string());
-        let private_key = PrivateKey::<Testnet3>::from_str(
+        let private_key = PrivateKey::<TestnetV0>::from_str(
             "APrivateKey1zkpEa57WrhvNVagKkja6mzU5waS4xFXidKtBNMweupft7JX",
         )
         .unwrap();
         // println!("P KEY: {:?}", private_key.get_address().to_string());
         let sender = "aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp".to_string();
 
-        // let private_key = PrivateKey::<Testnet3>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
+        // let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
         let base_url = format!(
             "https://aleo-testnet3.obscura.build/v1/{}",
             node_api_obscura
         );
-        let api_client = AleoAPIClient::<Testnet3>::new(&base_url, "testnet3").unwrap();
-        // let api_client = AleoAPIClient::<Testnet3>::local_testnet3("3000", "116.203.142.0");
-        let program_manager = ProgramManager::<Testnet3>::new(
+        let api_client = AleoAPIClient::<TestnetV0>::new(&base_url, "testnet").unwrap();
+        // let api_client = AleoAPIClient::<TestnetV0>::local_testnet3("3000", "116.203.142.0");
+        let program_manager = ProgramManager::<TestnetV0>::new(
             Some(private_key),
             None,
             Some(api_client.clone()),
@@ -559,7 +559,7 @@ mod tests {
         const RECORD_MAINNET: &str = r"{owner:aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp.private,microcredits:3073224u64.private,_nonce:5199634801620992412289862193157265588660085109225328599563543525856471294537group.public}";
         let fee_record = None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); ////Some(Record::from_str(r"{owner: aleo1rhgdu77hgyqd3xjj8ucu3jj9r2krwz6mnzyd80gncr5fxcwlh5rsvzp9px.private,microcredits: 1000000u64.private,_nonce: 6359981118440619636307465025861597379883101966015424940295774216783421394007group.public}").unwrap()); //None; //Some(Record::from_str(RECORD_MAINNET).unwrap()); //
         let program_id = "credits.aleo";
-        let network = SupportedNetworks::Testnet3;
+        let network = SupportedNetworks::Testnet;
         let delegate = true;
 
         let credits_mapping = match api_client
