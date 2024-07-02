@@ -53,36 +53,36 @@ impl<N: Network> AleoAPIClient<N> {
     /// Get the block matching the specific height from the network
     pub fn get_block(&self, height: u32) -> Result<Block<N>> {
         let url = format!("{}/{}/block/{height}", self.base_url, self.network_id);
-        let block_str: String = match self.client.get(&url).call() {
-            Ok(block) => {
-                let block_str = block.into_string()?;
-                println!("Block: {:?}", block_str);
-                let mut v: serde_json::Value = serde_json::from_str(&block_str)?;
-                println!("Parsed JSON: {:?}", v);
-                // Extract the "counter" field and modify it
-                if let Some(counter) = v["solutions"]["solutions"]["solutions"][0]
-                    ["partial_solution"]["counter"]
-                    .as_str()
-                {
-                    println!("Counter: {:?}", counter);
-                    let new_counter = u64::from_str(counter).unwrap();
-                    v["solutions"]["solutions"]["solutions"][0]["partial_solution"]["counter"] =
-                        serde_json::Value::Number(new_counter.into());
-                }
-                let modified_json_str = serde_json::to_string(&v)?;
-                println!("Modified JSON: {:?}", modified_json_str);
-                modified_json_str
-            }
-            Err(error) => {
-                bail!("Failed to parse block {height}: {error}")
-            }
-        };
-        let fblock: Block<N> = serde_json::from_str(&block_str)?;
-        // match self.client.get(&url).call()?.into_json() {
-        //     Ok(block) => Ok(block),
-        //     Err(error) => bail!("Failed to parse block {height}: {error}"),
-        // }
-        Ok(fblock)
+        // let block_str: String = match self.client.get(&url).call() {
+        //     Ok(block) => {
+        //         let block_str = block.into_string()?;
+        //         println!("Block: {:?}", block_str);
+        //         let mut v: serde_json::Value = serde_json::from_str(&block_str)?;
+        //         println!("Parsed JSON: {:?}", v);
+        //         // Extract the "counter" field and modify it
+        //         if let Some(counter) = v["solutions"]["solutions"]["solutions"][0]
+        //             ["partial_solution"]["counter"]
+        //             .as_str()
+        //         {
+        //             println!("Counter: {:?}", counter);
+        //             let new_counter = u64::from_str(counter).unwrap();
+        //             v["solutions"]["solutions"]["solutions"][0]["partial_solution"]["counter"] =
+        //                 serde_json::Value::Number(new_counter.into());
+        //         }
+        //         let modified_json_str = serde_json::to_string(&v)?;
+        //         println!("Modified JSON: {:?}", modified_json_str);
+        //         modified_json_str
+        //     }
+        //     Err(error) => {
+        //         bail!("Failed to parse block {height}: {error}")
+        //     }
+        // };
+        // let fblock: Block<N> = serde_json::from_str(&block_str)?;
+        match self.client.get(&url).call()?.into_json() {
+            Ok(block) => Ok(block),
+            Err(error) => bail!("Failed to parse block {height}: {error}"),
+        }
+        // Ok(fblock)
     }
 
     /// Get a range of blocks from the network (limited 50 blocks at a time)
