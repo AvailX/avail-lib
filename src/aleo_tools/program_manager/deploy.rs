@@ -167,7 +167,7 @@ impl<N: Network> ProgramManager<N> {
             _ => bail!("❌ Transaction is not a deployment transaction"),
         };
 
-        let (minimum_deployment_cost, (storage_cost, namespace_cost)) =
+        let (minimum_deployment_cost, (storage_cost, namespace_cost, _temp)) =
             deployment_cost::<N>(deployment)?;
         Ok((minimum_deployment_cost, (storage_cost, namespace_cost)))
     }
