@@ -74,8 +74,11 @@ impl<N: Network> AleoAPIClient<N> {
             "{}/{}/blocks?start={start_height}&end={end_height}",
             self.base_url, self.network_id
         );
-        match self.client.get(&url).call()?.into_json() {
-            Ok(blocks) => Ok(blocks),
+        match self.client.get(&url).call() {
+            Ok(blocks) => {
+                let block_json: Vec<Block<N>> = blocks.into_json()?;
+                Ok(block_json)
+            }
             Err(error) => {
                 println!("Get Blocks Error {}", error.to_string());
                 match error.to_string().as_str().contains("Cannot create a block with zero transactions") {
@@ -452,8 +455,8 @@ mod tests {
 
     #[test]
     fn test_api_get_blocks_obscura() {
-        let client = AleoAPIClient::<TestnetV0>::testnet_obscura();
-        let blocks = client.get_blocks(65900, 65910).unwrap();
+        let client = AleoAPIClient::<TestnetV0>::testnet();
+        let blocks = client.get_blocks(70594, 70643).unwrap();
 
         // Check height matches
         println!("Blocks: {:?}", blocks);

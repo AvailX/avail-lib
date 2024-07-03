@@ -267,17 +267,17 @@ mod tests {
         let program_id = "credits.aleo";
         let network = SupportedNetworks::Testnet;
         let delegate = true;
-        let credits_mapping = match api_client
-            .clone()
-            .get_mapping_value(program_id, "account", &sender)
-        {
-            Ok(credits) => credits,
-            Err(e) => {
-                println!("ERROR: {:?}", e);
-                return;
-            }
-        };
-        println!("CREDITS MAPPING: {:?}", credits_mapping);
+        // let credits_mapping = match api_client
+        //     .clone()
+        //     .get_mapping_value(program_id, "account", &sender)
+        // {
+        //     Ok(credits) => credits,
+        //     Err(e) => {
+        //         println!("ERROR: {:?}", e);
+        //         return;
+        //     }
+        // };
+        // println!("CREDITS MAPPING: {:?}", credits_mapping);
         // Modify the logic to handle time taken to execute the transfer
         let start = Instant::now();
         let result = program_manager
@@ -292,7 +292,7 @@ mod tests {
                 program_id,
                 sender,
                 network,
-                !delegate,
+                delegate,
             )
             .await
             .unwrap();

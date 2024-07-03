@@ -14,6 +14,7 @@ pub async fn delegate_execution(request: ProverRequest) -> AvailResult<String> {
         .unwrap();
     println!("Prover Response{:?}", res);
     if res.status() == 200 {
+        println!("sss");
         Ok(res.text().await.unwrap())
     } else {
         Err(AvailError::new(
