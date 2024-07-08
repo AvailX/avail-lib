@@ -116,7 +116,7 @@ pub fn get_prover_client_with_session(
     let cookie_value = format!("{}={}", cookie_name, session);
 
     // let url = format!("{}/prover/{}", api, path);
-    let url = format!("http://localhost:8000/prover/{}", path);
+    let url = format!("http://192.168.1.4:8000/prover/{}", path);
 
     let request = client
         .request(method, url)
