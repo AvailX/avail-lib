@@ -124,6 +124,17 @@ pub fn get_prover_client_with_session(
     Ok(request)
 }
 
+pub fn get_marlin_client(
+    method: reqwest::Method,
+    path: &str,
+) -> AvailResult<reqwest::RequestBuilder> {
+    let client = reqwest::Client::new();
+
+    let url = format!("http://localhost:3030/{}", path);
+
+    let request = client.request(method, url);
+    Ok(request)
+}
 // create a global state of a session string called SESSION
 
 #[derive(Debug)]

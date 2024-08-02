@@ -6,7 +6,7 @@ use crate::{
     errors::{AvailError, AvailErrorType},
     models::{mobile_prover::ProverRequest, network::SupportedNetworks},
     service_clients::get_prover_client_with_session,
-    utils::delegate_execution,
+    utils::{delegate_execution, delegate_execution_marlin, MarlinRequest, SecretAuth},
 };
 use rand::{
     rngs::{StdRng, ThreadRng},
@@ -22,6 +22,7 @@ use snarkvm::{
     },
     synthesizer::vm,
 };
+use ureq::json;
 
 /// Transfer Type to Perform
 #[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
@@ -171,9 +172,23 @@ impl<N: Network> ProgramManager<N> {
                     Some(fee_auth) => Some(ProverRequest::to_bytes_auth_object(fee_auth).unwrap()),
                     None => None,
                 };
+                let auth_json = json!(&authorization);
+                let fee_auth_json = match fee_authorization.clone() {
+                    Some(fee_auth) => Some(json!(&fee_auth)),
+                    None => None,
+                };
+                println!("AUTH JSON: {:?}", auth_json);
+                println!("FEE AUTH JSON: {:?}", fee_auth_json);
+                let marlin_request = MarlinRequest {
+                    public: "1u16".to_string(),
+                    secret: SecretAuth {
+                        auth: auth_json,
+                        fee_auth: fee_auth_json.unwrap(),
+                    },
+                };
                 let prover_request =
                     ProverRequest::new(sender.clone(), auth_bytes, network, fee_auth_bytes);
-                let txn_string = delegate_execution(prover_request).await.unwrap();
+                let txn_string = delegate_execution_marlin(marlin_request).await.unwrap();
 
                 println!("txn_string: {:?}", txn_string);
                 let txn = Transaction::from_str(&txn_string).unwrap();
@@ -231,11 +246,11 @@ mod tests {
         // let st = SESSION.get_session_token().unwrap();
         SESSION.set_session_token("tylerDurden@0xf5".to_string());
         let private_key = PrivateKey::<TestnetV0>::from_str(
-            "APrivateKey1zkpEa57WrhvNVagKkja6mzU5waS4xFXidKtBNMweupft7JX",
+            "APrivateKey1zkpB84MEh8VNQWmvRXxUw9RrXgJsdUTu56YA2xPPSsjCJSX",
         )
         .unwrap();
         // println!("P KEY: {:?}", private_key.get_address().to_string());
-        let sender = "aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp".to_string();
+        let sender = "aleo1unlnz85dj6jjwex7hrmgxwvsdry5h9fs8jp009yq6kh4tk27jyzq5k56rl".to_string();
 
         // let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
@@ -257,7 +272,7 @@ mod tests {
         let fee = 963388u64;
         // let recipient_address = Address::from_str(TESTNET3_ADDRESS).unwrap();
         let recipient_address =
-            Address::from_str("aleo18lmhpa6znqe4eqgnhqccze9awqtutlkh0aukd05k7pl52uu8cvysxqwurp")
+            Address::from_str("aleo1unlnz85dj6jjwex7hrmgxwvsdry5h9fs8jp009yq6kh4tk27jyzq5k56rl")
                 .unwrap();
         let transfer_type = TransferType::Public;
         let password = Some("tylerDurden@0xf5");
