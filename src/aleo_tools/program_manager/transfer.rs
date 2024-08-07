@@ -191,7 +191,26 @@ impl<N: Network> ProgramManager<N> {
                 let txn_string = delegate_execution_marlin(marlin_request).await.unwrap();
 
                 println!("txn_string: {:?}", txn_string);
-                let txn = Transaction::from_str(&txn_string).unwrap();
+                let txn_json = serde_json::from_str::<serde_json::Value>(&txn_string).unwrap();
+                // println!("JSONNNNNN: {:?}", txn_json);
+                let execution = serde_json::from_value(txn_json["execution"].clone()).unwrap();
+                let fee = serde_json::from_value(txn_json["fee"].clone()).unwrap();
+                println!("EXECUTION: {:?}", execution);
+                println!("FEE: {:?}", fee);
+                let mut rng = rand::thread_rng();
+                // Initialize a VM
+                let store = ConsensusStore::<N, ConsensusMemory<N>>::open(None)?;
+                let vm = VM::from(store)?;
+                let txn = Transaction::from_execution(execution, fee)?;
+
+                let check = match vm.check_transaction(&txn, None, &mut rng) {
+                    Ok(x) => {
+                        println!("||||| check ===> {:?}", x);
+                    }
+                    Err(e) => {
+                        println!("||||| check ERROR ===> {:?}", e);
+                    }
+                };
                 println!("txnid: {:?}", txn.id());
                 txn
             }
@@ -211,6 +230,15 @@ impl<N: Network> ProgramManager<N> {
                     Some(query),
                     &mut rng,
                 )?;
+                let check = match vm.check_transaction(&exec, None, &mut rng) {
+                    Ok(x) => {
+                        println!("||||| check ===> {:?}", x);
+                    }
+                    Err(e) => {
+                        println!("||||| check ERROR ===> {:?}", e);
+                    }
+                };
+
                 exec
             }
         };
@@ -254,10 +282,11 @@ mod tests {
 
         // let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
-        let base_url = format!(
-            "https://aleo-testnetbeta.obscura.network/v1/{}",
-            node_api_obscura
-        );
+        // let base_url = format!(
+        //     "https://aleo-testnetbeta.obscura.network/v1/{}",
+        //     node_api_obscura
+        // );
+        let base_url = "https://api.explorer.aleo.org/v1";
         let api_client = AleoAPIClient::<TestnetV0>::new(&base_url, "testnet").unwrap();
         // let api_client = AleoAPIClient::<TestnetV0>::local_testnet3("3000", "116.203.142.0");
         let program_manager = ProgramManager::<TestnetV0>::new(
@@ -548,10 +577,7 @@ mod tests {
 
         // let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
-        let base_url = format!(
-            "https://aleo-testnet3.obscura.build/v1/{}",
-            node_api_obscura
-        );
+        let base_url = "https://api.explorer.aleo.org/v1";
         let api_client = AleoAPIClient::<TestnetV0>::new(&base_url, "testnet").unwrap();
         // let api_client = AleoAPIClient::<TestnetV0>::local_testnet3("3000", "116.203.142.0");
         let program_manager = ProgramManager::<TestnetV0>::new(
@@ -577,17 +603,17 @@ mod tests {
         let network = SupportedNetworks::Testnet;
         let delegate = true;
 
-        let credits_mapping = match api_client
-            .clone()
-            .get_mapping_value(program_id, "account", &sender)
-        {
-            Ok(credits) => credits,
-            Err(e) => {
-                println!("ERROR: {:?}", e);
-                return;
-            }
-        };
-        println!("CREDITS MAPPING: {:?}", credits_mapping);
+        // let credits_mapping = match api_client
+        //     .clone()
+        //     .get_mapping_value(program_id, "account", &sender)
+        // {
+        //     Ok(credits) => credits,
+        //     Err(e) => {
+        //         println!("ERROR: {:?}", e);
+        //         return;
+        //     }
+        // };
+        // println!("CREDITS MAPPING: {:?}", credits_mapping);
 
         let mut handles = vec![];
         let mut total_time = Duration::new(0, 0);
