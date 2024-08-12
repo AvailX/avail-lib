@@ -147,7 +147,7 @@ impl<N: Network> ProgramManager<N> {
                                 &private_key,
                                 fee_record,
                                 fee,
-                                fee,
+                                0u64,
                                 execution_id,
                                 &mut rng,
                             )?;
@@ -156,7 +156,7 @@ impl<N: Network> ProgramManager<N> {
                             let fee_authorization = vm.authorize_fee_public(
                                 &private_key,
                                 fee,
-                                fee,
+                                0u64,
                                 execution_id,
                                 &mut rng,
                             )?;
@@ -226,7 +226,7 @@ impl<N: Network> ProgramManager<N> {
                     (program_id, transfer_function),
                     inputs.iter(),
                     fee_record,
-                    fee,
+                    0u64,
                     Some(query),
                     &mut rng,
                 )?;
