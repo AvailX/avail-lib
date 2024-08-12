@@ -146,7 +146,7 @@ impl<N: Network> ProgramManager<N> {
                                 &private_key,
                                 fee_record,
                                 fee,
-                                fee,
+                                0u64,
                                 execution_id,
                                 &mut rng,
                             )?;
@@ -155,7 +155,7 @@ impl<N: Network> ProgramManager<N> {
                             let fee_authorization = vm.authorize_fee_public(
                                 &private_key,
                                 fee,
-                                fee,
+                                0u64,
                                 execution_id,
                                 &mut rng,
                             )?;
@@ -192,7 +192,7 @@ impl<N: Network> ProgramManager<N> {
                     (program_id, transfer_function),
                     inputs.iter(),
                     fee_record,
-                    fee,
+                    0u64,
                     Some(query),
                     &mut rng,
                 )?;
@@ -534,7 +534,7 @@ mod tests {
         // let private_key = PrivateKey::<TestnetV0>::from_str(TESTNET3_PRIVATE_KEY).unwrap();
         let node_api_obscura = env!("TESTNET_API_OBSCURA");
         let base_url = format!(
-            "https://aleo-testnet3.obscura.build/v1/{}",
+            "https://aleo-testnetbeta.obscura.network/v1/{}",
             node_api_obscura
         );
         let api_client = AleoAPIClient::<TestnetV0>::new(&base_url, "testnet").unwrap();
@@ -562,22 +562,22 @@ mod tests {
         let network = SupportedNetworks::Testnet;
         let delegate = true;
 
-        let credits_mapping = match api_client
-            .clone()
-            .get_mapping_value(program_id, "account", &sender)
-        {
-            Ok(credits) => credits,
-            Err(e) => {
-                println!("ERROR: {:?}", e);
-                return;
-            }
-        };
-        println!("CREDITS MAPPING: {:?}", credits_mapping);
+        // let credits_mapping = match api_client
+        //     .clone()
+        //     .get_mapping_value(program_id, "account", &sender)
+        // {
+        //     Ok(credits) => credits,
+        //     Err(e) => {
+        //         println!("ERROR: {:?}", e);
+        //         return;
+        //     }
+        // };
+        // println!("CREDITS MAPPING: {:?}", credits_mapping);
 
         let mut handles = vec![];
         let mut total_time = Duration::new(0, 0);
 
-        for _ in 0..10 {
+        for _ in 0..100 {
             println!("_________________ITERATION_________________");
             let program_manager = program_manager.clone();
             let sender = sender.clone();
