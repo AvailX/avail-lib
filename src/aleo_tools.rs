@@ -4,3 +4,4 @@ pub mod api;
 pub mod encryptor;
 pub mod program_manager;
 pub mod test_utils;
+pub mod utils;
