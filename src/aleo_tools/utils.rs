@@ -1,13 +1,41 @@
 use std::str::FromStr;
 
-use snarkvm::prelude::{Address, Network, Signature};
+use snarkvm::prelude::{Address, MainnetV0, Network, Signature, TestnetV0};
 
 use crate::{
     converters::messages::{field_to_fields, utf8_string_to_bits},
-    errors::AvailResult,
+    errors::{AvailError, AvailErrorType, AvailResult},
+    models::{network::SupportedNetworks, web_user::UserVerificationRequest},
 };
 
-pub fn verify_signature<N: Network>(
+use super::program_manager::network;
+
+pub fn verify_signature(
+    verification_object: UserVerificationRequest,
+    address: &str,
+) -> AvailResult<bool> {
+    let network = SupportedNetworks::from_str(&verification_object.network)?;
+    let result = match network {
+        // SupportedNetworks::Mainnet => verify_signature_raw::<MainnetV0>(
+        //     &verification_object.message,
+        //     address,
+        //     &verification_object.sign,
+        // ),
+        SupportedNetworks::Testnet => verify_signature_raw::<TestnetV0>(
+            &verification_object.message,
+            address,
+            &verification_object.sign,
+        ),
+        _ => Err(AvailError::new(
+            AvailErrorType::Network,
+            "Incorrect Network".to_string(),
+            "Incorrect Network".to_string(),
+        )),
+    }?;
+    Ok(result)
+}
+
+fn verify_signature_raw<N: Network>(
     message: &str,
     address: &str,
     signature: &str,
