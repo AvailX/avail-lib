@@ -19,7 +19,6 @@ impl WebUser {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UserResponse {
-    pub signature: String,
     pub user: WebUser,
     pub exists: bool,
 }
