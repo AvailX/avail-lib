@@ -19,7 +19,7 @@ impl WebUser {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UserResponse {
-    pub user: WebUser,
+    pub user: Option<WebUser>,
     pub exists: bool,
 }
 // #[derive(Debug, Deserialize, Serialize)]
