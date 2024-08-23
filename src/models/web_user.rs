@@ -22,6 +22,14 @@ pub struct UserResponse {
     pub user: Option<WebUser>,
     pub exists: bool,
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserVerificationRequest {
+    pub sign: String,
+    pub message: String,
+    pub network: String,
+}
+
 // #[derive(Debug, Deserialize, Serialize)]
 // pub struct UpdateBackupRequest {
 //     pub backup: bool,
