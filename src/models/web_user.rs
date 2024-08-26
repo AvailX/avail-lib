@@ -32,8 +32,8 @@ pub struct UserVerificationRequest {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct UserCreationRequest {
-    user: WebUser,
-    verification_object: UserVerificationRequest,
+    pub user: WebUser,
+    pub verification_object: UserVerificationRequest,
 }
 
 // #[derive(Debug, Deserialize, Serialize)]
