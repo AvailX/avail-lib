@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use snarkvm::prelude::{Address, MainnetV0, Network, Signature, TestnetV0};
+use tracing::info;
 
 use crate::{
     converters::messages::{field_to_fields, utf8_string_to_bits},
@@ -15,6 +16,8 @@ pub fn verify_signature(
     address: &str,
 ) -> AvailResult<bool> {
     let network = SupportedNetworks::from_str(&verification_object.network)?;
+    println!("Verification Object: {:?}", verification_object);
+    info!("Verification Object: {:?}", verification_object);
     let result = match network {
         // SupportedNetworks::Mainnet => verify_signature_raw::<MainnetV0>(
         //     &verification_object.message,
@@ -48,6 +51,7 @@ fn verify_signature_raw<N: Network>(
     let msg = field_to_fields(&msg_field)?;
 
     let result = signature.verify(&address, &msg);
-
+    info!("Signature Verification Result: {:?}", result);
+    println!("Signature Verification Result: {:?}", result);
     Ok(result)
 }
