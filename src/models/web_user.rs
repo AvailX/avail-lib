@@ -30,6 +30,12 @@ pub struct UserVerificationRequest {
     pub network: String,
 }
 
+#[derive(Deserialize, Serialize, Debug)]
+pub struct UserCreationRequest {
+    user: WebUser,
+    verification_object: UserVerificationRequest,
+}
+
 // #[derive(Debug, Deserialize, Serialize)]
 // pub struct UpdateBackupRequest {
 //     pub backup: bool,
