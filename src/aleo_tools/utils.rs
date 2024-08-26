@@ -45,7 +45,8 @@ fn verify_signature_raw<N: Network>(
 ) -> AvailResult<bool> {
     let signature = Signature::<N>::from_str(signature)?;
     let address = Address::<N>::from_str(address)?;
-
+    info!("Signature: {:?}", signature);
+    info!("Address: {:?}", address);
     let msg_bits = utf8_string_to_bits(message);
     let msg_field = N::hash_bhp512(&msg_bits)?;
     let msg = field_to_fields(&msg_field)?;
