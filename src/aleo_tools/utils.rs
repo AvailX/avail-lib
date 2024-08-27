@@ -62,7 +62,7 @@ mod tests {
     use snarkvm::prelude::PrivateKey;
 
     use super::*;
-    use crate::models::web_user::WebUser;
+    use crate::models::academy::web_user::WebUser;
 
     #[test]
     fn test_signature() {
