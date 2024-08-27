@@ -6,7 +6,7 @@ use tracing::info;
 use crate::{
     converters::messages::{field_to_fields, utf8_string_to_bits},
     errors::{AvailError, AvailErrorType, AvailResult},
-    models::{network::SupportedNetworks, web_user::UserVerificationRequest},
+    models::{academy::web_user::UserVerificationRequest, network::SupportedNetworks},
 };
 
 use super::program_manager::network;
