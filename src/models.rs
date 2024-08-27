@@ -1,3 +1,4 @@
+pub mod academy;
 #[cfg(feature = "snarkvm")]
 pub mod constants;
 #[cfg(feature = "snarkvm")]
@@ -13,4 +14,3 @@ pub mod server_auth;
 pub mod tokens;
 pub mod traits;
 pub mod user;
-pub mod web_user;

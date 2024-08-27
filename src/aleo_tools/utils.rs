@@ -56,3 +56,58 @@ fn verify_signature_raw<N: Network>(
     println!("Signature Verification Result: {:?}", result);
     Ok(result)
 }
+
+#[cfg(test)]
+mod tests {
+    use snarkvm::prelude::PrivateKey;
+
+    use super::*;
+    use crate::models::web_user::WebUser;
+
+    #[test]
+    fn test_signature() {
+        let message = "Hello World";
+        let address = "aleo1633synkqz94vjcxfwy5yn60kvjz8c7heck8ym8tfahxrt443lqgsd49rqd";
+        let PK = PrivateKey::<TestnetV0>::from_str(
+            "APrivateKey1zkp3kgfxbSumSen6i5Vyszymi38HqEoUyVJFR9rdEJmNo3z",
+        )
+        .unwrap();
+        let rng = &mut rand::thread_rng();
+
+        let msg = utf8_string_to_bits(message);
+        println!("Message: {:?}", msg);
+        let msg_field = TestnetV0::hash_bhp512(&msg).unwrap();
+        println!("Message Field: {:?}", msg_field);
+        let msg = field_to_fields(&msg_field).unwrap();
+        println!("Message Fields: {:?}", msg);
+        let sign = PK.sign(&msg, rng).unwrap();
+        println!("Signature: {:?}", sign);
+        println!("Signature: {:?}", sign.to_string());
+        let res =
+            verify_signature_raw::<TestnetV0>(message, address, sign.to_string().as_str()).unwrap();
+        println!("Result: {:?}", res);
+    }
+    #[test]
+    fn test_signature_2() {
+        let message = "Hello World";
+        let address = "aleo16g7ym5gprqr5wzwqatzm3v9ceuuvt9tjghqvavgcuz2fqunxsvrsphs27j";
+        let PK = PrivateKey::<TestnetV0>::from_str(
+            "APrivateKey1zkpAWKS6uxn9VcDSmYKR2e4TAdv6VUpcF7orUmG1AG5wonL",
+        )
+        .unwrap();
+        let rng = &mut rand::thread_rng();
+
+        let msg = utf8_string_to_bits(message);
+        println!("Message: {:?}", msg);
+        let msg_field = TestnetV0::hash_bhp512(&msg).unwrap();
+        println!("Message Field: {:?}", msg_field);
+        let msg = field_to_fields(&msg_field).unwrap();
+        println!("Message Fields: {:?}", msg);
+        let sign = PK.sign(&msg, rng).unwrap();
+        println!("Signature: {:?}", sign);
+        println!("Signature: {:?}", sign.to_string());
+        let res =
+            verify_signature_raw::<TestnetV0>(message, address, sign.to_string().as_str()).unwrap();
+        println!("Result: {:?}", res);
+    }
+}
