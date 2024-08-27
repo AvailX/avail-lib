@@ -5,11 +5,11 @@ use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct TotalProgress {
-    user_id: Uuid,
-    address: String,
-    progress_percentage: i32,
-    modules_completed: Vec<Uuid>,
-    lessons_completed: Vec<Uuid>,
+    pub user_id: Uuid,
+    pub address: String,
+    pub progress_percentage: i32,
+    pub modules_completed: Vec<Uuid>,
+    pub lessons_completed: Vec<Uuid>,
 }
 
 impl TotalProgress {
@@ -32,16 +32,16 @@ impl TotalProgress {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ModuleProgress {
-    user_id: Uuid,
-    address: String,
-    module_id: Uuid,
-    progress_percentage: i32,
-    is_completed: bool,
-    score: i32,
-    time_taken: i64,
-    started_at: DateTime<Utc>,
-    completed_at: DateTime<Utc>,
-    lessons_completed: Vec<Uuid>,
+    pub user_id: Uuid,
+    pub address: String,
+    pub module_id: Uuid,
+    pub progress_percentage: i32,
+    pub is_completed: bool,
+    pub score: i32,
+    pub time_taken: i64,
+    pub started_at: DateTime<Utc>,
+    pub completed_at: DateTime<Utc>,
+    pub lessons_completed: Vec<Uuid>,
 }
 
 impl ModuleProgress {
