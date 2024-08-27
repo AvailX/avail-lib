@@ -8,8 +8,8 @@ pub struct TotalProgress {
     pub user_id: Uuid,
     pub address: String,
     pub progress_percentage: i32,
-    pub modules_completed: Vec<Uuid>,
-    pub lessons_completed: Vec<Uuid>,
+    pub modules_completed: Vec<Option<Uuid>>,
+    pub lessons_completed: Vec<Option<Uuid>>,
 }
 
 impl TotalProgress {
@@ -17,8 +17,8 @@ impl TotalProgress {
         user_id: Uuid,
         address: String,
         progress_percentage: i32,
-        modules_completed: Vec<Uuid>,
-        lessons_completed: Vec<Uuid>,
+        modules_completed: Vec<Option<Uuid>>,
+        lessons_completed: Vec<Option<Uuid>>,
     ) -> Self {
         Self {
             user_id,
@@ -41,7 +41,7 @@ pub struct ModuleProgress {
     pub time_taken: i64,
     pub started_at: DateTime<Utc>,
     pub completed_at: DateTime<Utc>,
-    pub lessons_completed: Vec<Uuid>,
+    pub lessons_completed: Vec<Option<Uuid>>,
 }
 
 impl ModuleProgress {
@@ -55,7 +55,7 @@ impl ModuleProgress {
         time_taken: i64,
         started_at: DateTime<Utc>,
         completed_at: DateTime<Utc>,
-        lessons_completed: Vec<Uuid>,
+        lessons_completed: Vec<Option<Uuid>>,
     ) -> Self {
         Self {
             user_id,
