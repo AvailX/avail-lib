@@ -39,8 +39,8 @@ pub struct ModuleProgress {
     pub is_completed: bool,
     pub score: i32,
     pub time_taken: i64,
-    pub started_at: DateTime<Utc>,
-    pub completed_at: DateTime<Utc>,
+    pub started_at: Option<DateTime<Utc>>,
+    pub completed_at: Option<DateTime<Utc>>,
     pub lessons_completed: Vec<Option<Uuid>>,
 }
 
@@ -53,8 +53,8 @@ impl ModuleProgress {
         is_completed: bool,
         score: i32,
         time_taken: i64,
-        started_at: DateTime<Utc>,
-        completed_at: DateTime<Utc>,
+        started_at: Option<DateTime<Utc>>,
+        completed_at: Option<DateTime<Utc>>,
         lessons_completed: Vec<Option<Uuid>>,
     ) -> Self {
         Self {
@@ -71,7 +71,7 @@ impl ModuleProgress {
         }
     }
     pub fn calculate_time_taken(&self) -> i64 {
-        let time_taken = self.completed_at - self.started_at;
+        let time_taken = self.completed_at.unwrap() - self.started_at.unwrap();
         time_taken.num_hours()
     }
 }
