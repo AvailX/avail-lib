@@ -77,3 +77,10 @@ pub struct LessonCreationRequest {
     pub quiz_content: Uuid,
     pub lesson_score: Option<i32>,
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ContentUpdateRequest {
+    pub text_content: Uuid,
+    pub video_content: Uuid,
+    pub quiz_content: Uuid,
+}
