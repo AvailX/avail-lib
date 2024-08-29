@@ -63,17 +63,17 @@ impl Lesson {
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ModuleCreationRequest {
-    module_name: String,
-    lesson_count: i32,
-    lesson_list: Vec<Option<Uuid>>,
+    pub module_name: String,
+    pub lesson_count: i32,
+    pub lesson_list: Vec<Option<Uuid>>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct LessonCreationRequest {
-    lesson_name: String,
-    module_id: Uuid,
-    text_content: Uuid,
-    video_content: Uuid,
-    quiz_content: Uuid,
-    lesson_score: Option<i32>,
+    pub lesson_name: String,
+    pub module_id: Uuid,
+    pub text_content: Uuid,
+    pub video_content: Uuid,
+    pub quiz_content: Uuid,
+    pub lesson_score: Option<i32>,
 }
