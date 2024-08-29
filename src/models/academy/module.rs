@@ -75,4 +75,5 @@ pub struct LessonCreationRequest {
     text_content: Uuid,
     video_content: Uuid,
     quiz_content: Uuid,
+    lesson_score: Option<i32>,
 }
