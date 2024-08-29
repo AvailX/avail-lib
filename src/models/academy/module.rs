@@ -36,6 +36,7 @@ pub struct Lesson {
     pub text_content: Uuid,
     pub video_content: Uuid,
     pub quiz_content: Uuid,
+    pub lesson_score: Option<i32>,
 }
 
 impl Lesson {
@@ -46,6 +47,7 @@ impl Lesson {
         text_content: Uuid,
         video_content: Uuid,
         quiz_content: Uuid,
+        lesson_score: Option<i32>,
     ) -> Self {
         Self {
             id,
@@ -54,6 +56,23 @@ impl Lesson {
             text_content,
             video_content,
             quiz_content,
+            lesson_score,
         }
     }
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ModuleCreationRequest {
+    module_name: String,
+    lesson_count: i32,
+    lesson_list: Vec<Option<Uuid>>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct LessonCreationRequest {
+    lesson_name: String,
+    module_id: Uuid,
+    text_content: Uuid,
+    video_content: Uuid,
+    quiz_content: Uuid,
 }
