@@ -75,3 +75,25 @@ impl ModuleProgress {
         time_taken.num_hours()
     }
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct TotalProgressCreationRequest {
+    pub user_id: Uuid,
+    pub address: String,
+    pub progress_percentage: i32,
+    pub modules_completed: Vec<Option<Uuid>>,
+    pub lessons_completed: Vec<Option<Uuid>>,
+}
+#[derive(Deserialize, Serialize, Debug)]
+pub struct ModuleProgressCreationRequest {
+    pub user_id: Uuid,
+    pub address: String,
+    pub module_id: Uuid,
+    pub progress_percentage: i32,
+    pub is_completed: bool,
+    pub score: i32,
+    pub time_taken: i64,
+    pub started_at: Option<DateTime<Utc>>,
+    pub completed_at: Option<DateTime<Utc>>,
+    pub lessons_completed: Vec<Option<Uuid>>,
+}
