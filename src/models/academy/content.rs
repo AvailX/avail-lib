@@ -42,3 +42,13 @@ impl TextContent {
         }
     }
 }
+
+#[derive(Deserialize, Serialize, Debug)]
+pub struct TextContentRequest {
+    pub module_id: Uuid,
+    pub lesson_id: Uuid,
+    pub title: String,
+    pub author: Option<String>,
+    pub content: Vec<Option<String>>,
+    pub slug: Option<String>,
+}
