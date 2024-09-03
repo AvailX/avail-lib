@@ -197,14 +197,10 @@ impl From<deadpool::managed::PoolError<diesel_async::pooled_connection::PoolErro
         }
     }
 }
-
+// <diesel_async::pooled_connection::PoolError>
 #[cfg(feature = "diesel_postgres")]
-impl From<deadpool::managed::BuildError<diesel_async::pooled_connection::PoolError>>
-    for AvailError
-{
-    fn from(
-        value: deadpool::managed::BuildError<diesel_async::pooled_connection::PoolError>,
-    ) -> Self {
+impl From<deadpool::managed::BuildError> for AvailError {
+    fn from(value: deadpool::managed::BuildError) -> Self {
         Self {
             error_type: AvailErrorType::Database,
             internal_msg: format!("BuildError: {}", value),
