@@ -73,14 +73,14 @@ pub struct LessonCreationRequest {
     pub lesson_name: String,
     pub module_id: Uuid,
     pub text_content: Uuid,
-    pub video_content: Uuid,
-    pub quiz_content: Uuid,
     pub lesson_score: Option<i32>,
+    pub quiz_content: Vec<Option<Uuid>>,
+    pub video_content: Vec<Option<Uuid>>,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ContentUpdateRequest {
     pub text_content: Uuid,
-    pub video_content: Uuid,
-    pub quiz_content: Uuid,
+    pub video_content: Vec<Option<Uuid>>,
+    pub quiz_content: Vec<Option<Uuid>>,
 }
