@@ -34,9 +34,9 @@ pub struct Lesson {
     pub lesson_name: String,
     pub module_id: Uuid,
     pub text_content: Uuid,
-    pub video_content: Uuid,
-    pub quiz_content: Uuid,
     pub lesson_score: Option<i32>,
+    pub quiz_content: Vec<Option<Uuid>>,
+    pub video_content: Vec<Option<Uuid>>,
 }
 
 impl Lesson {
@@ -45,9 +45,9 @@ impl Lesson {
         lesson_name: String,
         module_id: Uuid,
         text_content: Uuid,
-        video_content: Uuid,
-        quiz_content: Uuid,
         lesson_score: Option<i32>,
+        quiz_content: Vec<Option<Uuid>>,
+        video_content: Vec<Option<Uuid>>,
     ) -> Self {
         Self {
             id,
