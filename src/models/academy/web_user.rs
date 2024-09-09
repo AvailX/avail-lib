@@ -1,3 +1,5 @@
+use chrono::{DateTime, Utc};
+use diesel::sql_types::Date;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -5,14 +7,24 @@ pub struct WebUser {
     pub username: Option<String>,
     pub address: String,
     pub tag: Option<u32>,
+    pub streak: i32,
+    pub last_login: DateTime<Utc>,
 }
 
 impl WebUser {
-    pub fn new(username: Option<String>, address: String, tag: Option<u32>) -> Self {
+    pub fn new(
+        username: Option<String>,
+        address: String,
+        tag: Option<u32>,
+        streak: i32,
+        last_login: DateTime<Utc>,
+    ) -> Self {
         Self {
             username,
             address,
             tag,
+            streak,
+            last_login,
         }
     }
 }
