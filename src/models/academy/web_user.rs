@@ -7,6 +7,7 @@ pub struct WebUser {
     pub username: Option<String>,
     pub address: String,
     pub tag: Option<u32>,
+    pub created_at: DateTime<Utc>,
     pub streak: i32,
     pub last_login: DateTime<Utc>,
 }
