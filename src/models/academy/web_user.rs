@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use diesel::sql_types::Date;
+use keyring::credential;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -17,6 +18,7 @@ impl WebUser {
         username: Option<String>,
         address: String,
         tag: Option<u32>,
+        created_at: DateTime<Utc>,
         streak: i32,
         last_login: DateTime<Utc>,
     ) -> Self {
@@ -24,6 +26,7 @@ impl WebUser {
             username,
             address,
             tag,
+            created_at,
             streak,
             last_login,
         }
