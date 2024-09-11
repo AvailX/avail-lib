@@ -143,7 +143,7 @@ impl QuizContent {
         for (i, ans) in answers.iter().enumerate() {
             if let Some(answer) = &self.answers[i] {
                 if answer == ans {
-                    score += self.score.unwrap_or(1);
+                    score += self.score.unwrap_or(0);
                     correct_answers.push(true);
                 } else {
                     correct_answers.push(false);
