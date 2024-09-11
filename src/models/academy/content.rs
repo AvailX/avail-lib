@@ -137,20 +137,19 @@ impl QuizContent {
         }
     }
 
-    pub fn evaluate(&self, answers: Vec<String>) -> AvailResult<(i32, Vec<bool>)> {
+    pub fn evaluate(&self, answers: Vec<String>) -> AvailResult<i32> {
         let mut score = 0;
-        let mut correct_answers = vec![];
         for (i, ans) in answers.iter().enumerate() {
             if let Some(answer) = &self.answers[i] {
+                println!("Answer: {}", answer);
+                println!("i: {}", i);
                 if answer == ans {
+                    println!("Correct Answer: {}", answer);
                     score += self.score.unwrap_or(0);
-                    correct_answers.push(true);
-                } else {
-                    correct_answers.push(false);
                 }
             }
         }
-        Ok((score, correct_answers))
+        Ok(score)
     }
 }
 
@@ -172,4 +171,35 @@ pub struct AddQuizQuestionRequest {
     pub options: Vec<Option<String>>,
     pub answers: Vec<Option<String>>,
     pub score: Option<i32>,
+}
+
+// Write a quick test case to test the evaluate method of the QuizContent struct
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_quiz_content_evaluate() {
+        let quiz = QuizContent::new(
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            Uuid::new_v4(),
+            "Test Quiz".to_string(),
+            None,
+            None,
+            "What is 1 + 1?".to_string(),
+            vec![
+                Some("1".to_string()),
+                Some("2".to_string()),
+                Some("3".to_string()),
+                Some("4".to_string()),
+            ],
+            vec![Some("2".to_string()), Some("3".to_string())],
+            Some(10),
+        );
+
+        let answers = vec!["2".to_string(), "3".to_string()];
+        let score = quiz.evaluate(answers).unwrap();
+        println!("Score: {}", score);
+    }
 }
