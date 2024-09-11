@@ -4,6 +4,8 @@ use diesel::sql_types::Date;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use crate::errors::AvailResult;
+
 #[derive(Deserialize, Serialize, Debug)]
 pub struct TextContent {
     pub id: Uuid,
@@ -133,6 +135,22 @@ impl QuizContent {
             answers,
             score,
         }
+    }
+
+    pub fn evaluate(&self, answers: Vec<String>) -> AvailResult<(i32, Vec<bool>)> {
+        let mut score = 0;
+        let mut correct_answers = vec![];
+        for (i, ans) in answers.iter().enumerate() {
+            if let Some(answer) = &self.answers[i] {
+                if answer == ans {
+                    score += self.score.unwrap_or(1);
+                    correct_answers.push(true);
+                } else {
+                    correct_answers.push(false);
+                }
+            }
+        }
+        Ok((score, correct_answers))
     }
 }
 
