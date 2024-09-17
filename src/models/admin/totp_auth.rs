@@ -78,7 +78,7 @@ mod tests {
         let otp = "993864";
         let sec_env = env!("TOTP_SECRET");
 
-        let result = super::verify_totp(otp, &sec_env).unwrap();
+        let result = super::verify_totp(otp).unwrap();
         println!("Result: {}", result);
     }
 }
