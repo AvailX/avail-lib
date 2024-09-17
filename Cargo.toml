@@ -46,6 +46,11 @@ uuid = { version = "1.4.1", features = [
     "macro-diagnostics",
     "serde",
 ] }
+qrcode = "0.14.1"
+base32 = "0.5.1"
+image = "0.25.2"
+otpauth = "0.5.1"
+totp-rs = "5.6.0"
 
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]

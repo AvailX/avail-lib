@@ -1,4 +1,5 @@
 pub mod academy;
+pub mod admin;
 #[cfg(feature = "snarkvm")]
 pub mod constants;
 #[cfg(feature = "snarkvm")]
