@@ -51,6 +51,8 @@ base32 = "0.5.1"
 image = "0.25.2"
 otpauth = "0.5.1"
 totp-rs = "5.6.0"
+actix = "0.13.5"
+actix-web = "4.9.0"
 
 
 [target.'cfg(any(target_os = "macos", target_os = "ios"))'.dependencies]
