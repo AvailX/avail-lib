@@ -44,7 +44,7 @@ pub async fn add_quiz_content_to_lesson(
     if is_local {
         url = format!(
             "http://localhost:8004/lessons/update/quiz/{}/{}",
-            lesson_id, _
+            lesson_id, quiz_content_id
         );
     }
     let res = client.post(&url).send().await;
