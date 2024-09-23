@@ -47,8 +47,15 @@ pub struct UserVerificationRequest {
 }
 
 #[derive(Deserialize, Serialize, Debug)]
+pub struct CreationUserObject {
+    pub username: Option<String>,
+    pub address: String,
+    pub tag: Option<u32>,
+}
+
+#[derive(Deserialize, Serialize, Debug)]
 pub struct UserCreationRequest {
-    pub user: WebUser,
+    pub user: CreationUserObject,
     pub verification_object: UserVerificationRequest,
 }
 
