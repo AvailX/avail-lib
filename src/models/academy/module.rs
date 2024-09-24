@@ -1,6 +1,5 @@
 use aes_gcm::aes::cipher::typenum::Less;
 use chrono::{DateTime, Utc};
-use diesel::sql_types::Date;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 

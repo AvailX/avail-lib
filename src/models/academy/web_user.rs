@@ -1,6 +1,4 @@
 use chrono::{DateTime, Utc};
-use diesel::sql_types::Date;
-use keyring::credential;
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug)]
