@@ -72,6 +72,8 @@ pub struct ModuleCreationRequest {
     pub module_name: String,
     pub lesson_count: i32,
     pub lesson_list: Vec<Option<Uuid>>,
+    pub m_desc: String,
+    pub xp: i64,
 }
 
 #[derive(Deserialize, Serialize, Debug)]
