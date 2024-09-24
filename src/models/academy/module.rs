@@ -10,6 +10,8 @@ pub struct Module {
     pub module_name: String,
     pub lesson_count: i32,
     pub lessons: Vec<Option<Uuid>>,
+    pub m_desc: String,
+    pub xp: i64,
 }
 
 impl Module {
@@ -18,12 +20,16 @@ impl Module {
         module_name: String,
         lesson_count: i32,
         lessons: Vec<Option<Uuid>>,
+        m_desc: String,
+        xp: i64,
     ) -> Self {
         Self {
             id,
             module_name,
             lesson_count,
             lessons,
+            m_desc,
+            xp,
         }
     }
 }
