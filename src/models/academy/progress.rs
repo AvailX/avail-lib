@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use snarkvm::circuit::modules;
 use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -9,6 +10,7 @@ pub struct TotalProgress {
     pub progress_percentage: i32,
     pub modules_completed: Vec<Option<Uuid>>,
     pub lessons_completed: Vec<Option<Uuid>>,
+    pub modules_in_progress: Vec<Option<Uuid>>,
 }
 
 impl TotalProgress {
@@ -18,6 +20,7 @@ impl TotalProgress {
         progress_percentage: i32,
         modules_completed: Vec<Option<Uuid>>,
         lessons_completed: Vec<Option<Uuid>>,
+        modules_in_progress: Vec<Option<Uuid>>,
     ) -> Self {
         Self {
             user_id,
@@ -25,6 +28,7 @@ impl TotalProgress {
             progress_percentage,
             modules_completed,
             lessons_completed,
+            modules_in_progress,
         }
     }
 }
@@ -82,6 +86,7 @@ pub struct TotalProgressCreationRequest {
     pub progress_percentage: i32,
     pub modules_completed: Vec<Option<Uuid>>,
     pub lessons_completed: Vec<Option<Uuid>>,
+    pub modules_in_progress: Vec<Option<Uuid>>,
 }
 #[derive(Deserialize, Serialize, Debug)]
 pub struct ModuleProgressCreationRequest {
