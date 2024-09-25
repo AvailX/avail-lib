@@ -9,6 +9,7 @@ pub struct WebUser {
     pub created_at: DateTime<Utc>,
     pub streak: i32,
     pub last_login: DateTime<Utc>,
+    pub xp: i64,
 }
 
 impl WebUser {
@@ -19,6 +20,7 @@ impl WebUser {
         created_at: DateTime<Utc>,
         streak: i32,
         last_login: DateTime<Utc>,
+        xp: i64,
     ) -> Self {
         Self {
             username,
@@ -27,6 +29,7 @@ impl WebUser {
             created_at,
             streak,
             last_login,
+            xp,
         }
     }
 }
@@ -57,16 +60,6 @@ pub struct UserCreationRequest {
     pub verification_object: UserVerificationRequest,
 }
 
-// #[derive(Debug, Deserialize, Serialize)]
-// pub struct UpdateBackupRequest {
-//     pub backup: bool,
-// }
-
-// impl UpdateBackupRequest {
-//     pub fn new(backup: bool) -> Self {
-//         Self { backup }
-//     }
-// }
 // ToDo - Add Level struct with enum for level type
 // ToDo - Add Socials struct with String of Social URL's
 // ToDo - Add Profile struct with User, Level, and Socials and progress
