@@ -155,7 +155,8 @@ pub async fn check_if_module_completion(
                     return AvailResult::Ok(false);
                 }
                 if check_if_lesson_present(module.clone().lessons, result.lessons_completed) {
-                    process_module_completion(address, m_id, Some(module.clone()), is_local);
+                    process_module_completion(address, m_id, Some(module.clone()), is_local)
+                        .await?;
                     AvailResult::Ok(true)
                 } else {
                     AvailResult::Ok(false)
