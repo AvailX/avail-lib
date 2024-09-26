@@ -100,3 +100,25 @@ pub async fn add_lesson(m_id: Uuid, l_id: Uuid, is_local: bool) -> AvailResult<(
         }
     }
 }
+
+pub async fn increment_xp(address: String, xp: i64, is_local: bool) -> AvailResult<()> {
+    let client = Client::new();
+    let api = env!("TEST_API_URL");
+    let mut req_url = format!("{api}/users/incrementXP/{address}/{xp}");
+    if is_local {
+        req_url = format!("http://localhost:8004/users/incrementXP/{address}/{xp}");
+    }
+    info!("req_url: {:?}", req_url);
+    match client.put(&req_url).send().await {
+        Ok(res) => AvailResult::Ok(()),
+
+        Err(e) => {
+            error!("Error sending request: {:?}", e);
+            Err(AvailError::new(
+                AvailErrorType::NotFound,
+                "User not found in user-service".to_string(),
+                "User not found in user-service".to_string(),
+            ))
+        }
+    }
+}
