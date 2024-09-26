@@ -3,7 +3,7 @@ use reqwest::Client;
 use tracing::error;
 use uuid::Uuid;
 
-use super::module::Module;
+use super::{content::TextContent, module::Module};
 
 pub async fn module_exists(m_id: Uuid, is_local: bool) -> AvailResult<bool> {
     let api = env!("TEST_API_URL");
@@ -80,6 +80,33 @@ pub async fn if_lesson_is_of_module(l_id: Uuid, m_id: Uuid, is_local: bool) -> A
             Err(e) => Err(AvailError::new(
                 AvailErrorType::InvalidData,
                 "JSON parsing error".to_string(),
+                "JSON parsing error".to_string(),
+            )),
+        },
+        Err(e) => {
+            error!("Error sending request: {:?}", e);
+            Err(AvailError::new(
+                AvailErrorType::NotFound,
+                "Module not found in module-service".to_string(),
+                "Module not found in module-service".to_string(),
+            ))
+        }
+    }
+}
+
+pub async fn text_exists(text_id: Uuid, is_local: bool) -> AvailResult<bool> {
+    let api = env!("TEST_API_URL");
+    let mut req_url = format!("{api}/textcontent/getTextContentById/{text_id}");
+    if is_local {
+        req_url = format!("http://localhost:8004/textcontent/getTextContentById/{text_id}");
+    }
+    let client = reqwest::Client::new();
+    match client.get(&req_url).send().await {
+        Ok(res) => match res.json::<TextContent>().await {
+            Ok(result) => Ok(true),
+            Err(e) => Err(AvailError::new(
+                AvailErrorType::InvalidData,
+                "JSON parsing error | Text Content Exists".to_string(),
                 "JSON parsing error".to_string(),
             )),
         },
