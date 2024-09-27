@@ -151,6 +151,9 @@ pub async fn check_if_module_completion(
     match client.get(&module_progress_url).send().await {
         Ok(res) => match res.json::<ModuleProgress>().await {
             Ok(result) => {
+                if result.is_completed {
+                    return AvailResult::Ok(true);
+                }
                 if result.lessons_completed.len() != module.lessons.len() {
                     return AvailResult::Ok(false);
                 }
@@ -164,8 +167,8 @@ pub async fn check_if_module_completion(
             }
             Err(e) => Err(AvailError::new(
                 AvailErrorType::InvalidData,
-                "JSON parsing error".to_string(),
-                "JSON parsing error".to_string(),
+                e.to_string(),
+                e.to_string(),
             )),
         },
         Err(e) => {
@@ -257,6 +260,7 @@ pub async fn process_module_completion(
 
     //     //
     // }
+
     match increment_xp(address.clone(), module.clone().unwrap().xp, is_local).await {
         Ok(_) => {}
         Err(e) => {
