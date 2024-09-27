@@ -333,6 +333,7 @@ pub async fn calculate_total_progress(is_local: bool, modules_completed: i32) ->
             Ok(result) => {
                 let total_modules: i32 = result.len() as i32;
                 let progress = (modules_completed / total_modules) * 100;
+                info!("progress: {:?}", progress);
                 AvailResult::Ok(progress)
             }
             Err(e) => Err(AvailError::new(

@@ -1,6 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use snarkvm::circuit::modules;
+use tracing::info;
 use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug)]
@@ -74,8 +75,12 @@ impl ModuleProgress {
         }
     }
     pub fn calculate_time_taken(&self) -> i64 {
+        info!("Calculating time taken");
         let time_taken = self.completed_at.unwrap() - self.started_at.unwrap();
-        time_taken.num_hours()
+        info!("Time taken: {:?}", time_taken);
+        info!("Time taken in hours: {:?}", time_taken.num_hours());
+        info!("Time taken in minutes: {:?}", time_taken.num_minutes());
+        time_taken.num_minutes()
     }
 }
 
