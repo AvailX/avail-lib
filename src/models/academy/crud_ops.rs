@@ -332,7 +332,11 @@ pub async fn calculate_total_progress(is_local: bool, modules_completed: i32) ->
         Ok(res) => match res.json::<Vec<Module>>().await {
             Ok(result) => {
                 let total_modules: i32 = result.len() as i32;
-                let progress = (modules_completed / total_modules) * 100;
+                let progress: i32 = if total_modules > 0 {
+                    ((modules_completed as f64 / total_modules as f64) * 100.0).round() as i32
+                } else {
+                    0 // Handle the case where total_modules is zero to avoid division by zero
+                };
                 info!(
                     "{:?} // {:?}  ---> progress: {:?}",
                     modules_completed, total_modules, progress
