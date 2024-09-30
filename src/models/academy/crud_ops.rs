@@ -363,3 +363,43 @@ pub async fn calculate_total_progress(is_local: bool, modules_completed: i32) ->
         }
     }
 }
+
+pub async fn calculate_module_progress(is_local: bool, lessons_completed: i32) -> AvailResult<i32> {
+    let client = Client::new();
+    let api = env!("TEST_API_URL");
+    let mut req_url = format!("{api}/lessons/all");
+    if is_local {
+        req_url = format!("http://localhost:8004/learn/lessons/all");
+    }
+    info!("req_url: {:?}", req_url);
+    match client.get(&req_url).send().await {
+        Ok(res) => match res.json::<Vec<Module>>().await {
+            Ok(result) => {
+                let total_modules: i32 = result.len() as i32;
+                let progress: i32 = if total_modules > 0 {
+                    ((lessons_completed as f64 / total_modules as f64) * 100.0).round() as i32
+                } else {
+                    0 // Handle the case where total_modules is zero to avoid division by zero
+                };
+                info!(
+                    "{:?} // {:?}  ---> progress: {:?}",
+                    lessons_completed, total_modules, progress
+                );
+                AvailResult::Ok(progress)
+            }
+            Err(e) => Err(AvailError::new(
+                AvailErrorType::InvalidData,
+                "JSON parsing error".to_string(),
+                "JSON parsing error".to_string(),
+            )),
+        },
+        Err(e) => {
+            error!("Error sending request: {:?}", e);
+            Err(AvailError::new(
+                AvailErrorType::NotFound,
+                "User not found in user-service".to_string(),
+                "User not found in user-service".to_string(),
+            ))
+        }
+    }
+}
