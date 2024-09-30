@@ -7,7 +7,10 @@ use uuid::Uuid;
 
 use crate::{
     errors::{AvailError, AvailErrorType, AvailResult},
-    models::academy::{module::Module, progress::ModuleProgress},
+    models::academy::{
+        module::{Lesson, Module},
+        progress::ModuleProgress,
+    },
 };
 
 pub async fn add_text_content_to_lesson(
@@ -373,17 +376,17 @@ pub async fn calculate_module_progress(is_local: bool, lessons_completed: i32) -
     }
     info!("req_url: {:?}", req_url);
     match client.get(&req_url).send().await {
-        Ok(res) => match res.json::<Vec<Module>>().await {
+        Ok(res) => match res.json::<Vec<Lesson>>().await {
             Ok(result) => {
-                let total_modules: i32 = result.len() as i32;
-                let progress: i32 = if total_modules > 0 {
-                    ((lessons_completed as f64 / total_modules as f64) * 100.0).round() as i32
+                let total_lessons: i32 = result.len() as i32;
+                let progress: i32 = if total_lessons > 0 {
+                    ((lessons_completed as f64 / total_lessons as f64) * 100.0).round() as i32
                 } else {
                     0 // Handle the case where total_modules is zero to avoid division by zero
                 };
                 info!(
                     "{:?} // {:?}  ---> progress: {:?}",
-                    lessons_completed, total_modules, progress
+                    lessons_completed, total_lessons, progress
                 );
                 AvailResult::Ok(progress)
             }
